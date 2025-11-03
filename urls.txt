@@ -1,0 +1,55 @@
+﻿https://angular.io/
+         * License: MIT
+         */class k extends f.VF{constructor(){super(...arguments),this.supportsDOMEvents=!0}}class he extends k{static makeCurrent(){(0,f.ZD)(new he)}onAndCancel(Ye,pe,Ne){return Ye.addEventListener(pe,Ne),()=>{Ye.removeEventListener(pe,Ne)}}dispatchEvent(Ye,pe){Ye.dispatchEvent(pe)}remove(Ye){Ye.parentNode&&Ye.parentNode.removeChild(Ye)}createElement(Ye,pe){return(pe=pe||this.getDefaultDocument()).createElement(Ye)}createHtmlDocument(){return document.implementation.createHTMLDocument(
+https://angular.io/
+         * License: MIT
+         */class ne{}class Oe{}class ge{constructor(be){this.normalizedNames=new Map,this.lazyUpdate=null,be?
+https://angular.io/
+         * License: MIT
+         */const ai=
+https://angular.io/
+         * License: MIT
+         */const Ct=
+https://angular.io/
+         * License: MIT
+         */const J=
+https://angular.io/
+         * License: MIT
+         */let f=null;function k(){return f}function he(S){f??=S}class Z{}const J=new g.nKC(
+https://angular.io/
+         * License: MIT
+         */let G=(()=>{class P{constructor(O,Q){this._renderer=O,this._elementRef=Q,this.onChange=Te=>{},this.onTouched=()=>{}}setProperty(O,Q){this._renderer.setProperty(this._elementRef.nativeElement,O,Q)}registerOnTouched(O){this.onTouched=O}registerOnChange(O){this.onChange=O}setDisabledState(O){this.setProperty(
+https://angular.io/
+         * License: MIT
+         */let yc=(()=>{class r extends hi{constructor(s,c,d){super(s,c,d,(0,f.WQX)(f.An2,{optional:!0}))}ngOnDestroy(){this.flush()}static#e=this.\u0275fac=function(c){return new(c||r)(f.KVO(bi.qQ),f.KVO(dn),f.KVO(ui))};static#t=this.\u0275prov=f.jDH({token:r,factory:r.\u0275fac})}return r})();const tr=[{provide:ui,useFactory:function ra(){return new mr}},{provide:hi,useClass:yc},{provide:f._9s,useFactory:function ia(r,n,s){return new Hc(r,n,s)},deps:[g.B7,hi,f.SKi]}],gi=[{provide:dn,useFactory:()=>new jc},{provide:f.bc$,useValue:
+https://angular.io/license
+         */
+function oT(e,t,i){Cm(t)&&(t=t());const o=Dt();return Fs(o,Po(),t)&&Yo(Bn(),ds(),o,e,t,o[nr],i,!1),oT}function $M(e,t){const i=Cm(e);return i&&e.set(t),i}function aT(e,t){const i=Dt(),o=Bn(),l=Ci();return p(o,i,i[nr],l,e,t),aT}function cT(e,t,i,o,l){if(e=$e(e),Array.isArray(e))for(let h=0;h<e.length;h++)cT(e[h],t,i,o,l);else{const h=Bn(),m=Dt(),E=Ci();let D=yo(e)?e:$e(e.provide);const V=Gc(e),K=1048575&E.providerIndexes,ae=E.directiveStart,Ae=E.providerIndexes>>20;if(yo(e)||!e.multi){const je=new tu(V,l,Gd),tt=uT(D,t,l?K:K+Ae,ae);-1===tt?(qh(Sd(E,m),h,D),lT(h,e,t.length),t.push(D),E.directiveStart++,E.directiveEnd++,l&&(E.providerIndexes+=1048576),i.push(je),m.push(je)):(i[tt]=je,m[tt]=je)}else{const je=uT(D,t,K+Ae,ae),tt=uT(D,t,K,K+Ae),Jt=tt>=0&&i[tt];if(l&&!Jt||!l&&!(je>=0&&i[je])){qh(Sd(E,m),h,D);const ln=function PO(e,t,i,o,l){const h=new tu(e,i,Gd);return h.multi=[],h.index=t,h.componentProviders=0,HM(h,l,o&&!i),h}(l?AO:OO,i.length,l,o,V);!l&&Jt&&(i[tt].providerFactory=ln),lT(h,e,t.length,0),t.push(D),E.directiveStart++,E.directiveEnd++,l&&(E.providerIndexes+=1048576),i.push(ln),m.push(ln)}else lT(h,e,je>-1?je:tt,HM(i[l?tt:je],V,!l&&o));!l&&o&&Jt&&i[tt].componentProviders++}}}function lT(e,t,i,o){const l=yo(t),h=function Ec(e){return!!e.useClass}(t);if(l||h){const D=(h?$e(t.useClass):t).prototype.ngOnDestroy;if(D){const V=e.destroyHooks||(e.destroyHooks=[]);if(!l&&t.multi){const K=V.indexOf(i);-1===K?V.push(i,[o,D]):V[K+1].push(o,D)}else V.push(i,D)}}}function HM(e,t,i){return i&&e.componentProviders++,e.multi.push(t)-1}function uT(e,t,i,o){for(let l=i;l<o;l++)if(t[l]===e)return l;return-1}function OO(e,t,i,o){return dT(this.multi,[])}function AO(e,t,i,o){const l=this.multi;let h;if(this.providerFactory){const m=this.providerFactory.componentProviders,E=Wa(i,i[we],this.providerFactory.index,o);h=E.slice(0,m),dT(l,h);for(let D=m;D<E.length;D++)h.push(E[D])}else h=[],dT(l,h);return h}function dT(e,t){for(let i=0;i<e.length;i++)t.push((0,e[i])());return t}function zM(e,t=[]){return i=>{i.providersResolver=(o,l)=>function IO(e,t,i){const o=Bn();if(o.firstCreatePass){const l=Ho(e);cT(i,o.data,o.blueprint,l,!0),cT(t,o.data,o.blueprint,l,!1)}}(o,l?l(e):e,t)}}let RO=(()=>{class e{constructor(i){this._injector=i,this.cachedInjectors=new Map}getOrCreateStandaloneInjector(i){if(!i.standalone)return null;if(!this.cachedInjectors.has(i)){const o=Mo(0,i.type),l=o.length>0?Om([o],this._injector,`Standalone[${i.type.name}]`):null;this.cachedInjectors.set(i,l)}return this.cachedInjectors.get(i)}ngOnDestroy(){try{for(const i of this.cachedInjectors.values())null!==i&&i.destroy()}finally{this.cachedInjectors.clear()}}static#e=this.\u0275prov=Kt({token:e,providedIn:
+https://angular.io/license
+         */function Jr(e){return e.ngOriginalError}class si{constructor(){this._console=console}handleError(t){const i=this._findOriginalError(t);this._console.error(
+https://api.marketfiyati.org.tr/api/v1
+https://api.marketfiyati.org.tr/api/v2
+https://api-test.marketfiyati.org.tr/]
+https://appgallery.huawei.com/app/C115165991
+https://apps.apple.com/tr/app/market-fiyat%C4%B1/id6741807014?l=tr
+https://docs.sentry.io/platforms/javascript/best-practices/browser-extensions/
+https://docs.sentry.io/platforms/javascript/guides/angular/#angular-version-compatibility.
+https://g.co/ng/security#xss
+https://getbootstrap.com/)
+          * Copyright 2011-2024 The Bootstrap Authors (https://github.com/twbs/bootstrap/graphs/contributors)
+          * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+          */const Rn=new Map,Wn={set(U,v,x){Rn.has(U)||Rn.set(U,new Map);const se=Rn.get(U);se.has(v)||0===se.size?se.set(v,x):console.error(`Bootstrap doesn
+https://harita.marketfiyati.org.tr/Service/api/v1
+https://leafletjs.com
+https://leafletjs.com
+         * (c) 2010-2023 Vladimir Agafonkin, (c) 2010-2011 CloudMade
+         */
+!function(b){
+https://marketfiyati.org.tr
+https://play.google.com/store/apps/details?id=tr.gov.tubitak.bilgem.marketfiyatii
+https://popper.js.org)
+https://www.facebook.com/tubitak
+https://www.instagram.com/tubitak/
+https://www.linkedin.com/company/tubitak/posts/?feedView=all
+https://www.youtube.com/user/tubitaktv
+https://x.com/tubitak

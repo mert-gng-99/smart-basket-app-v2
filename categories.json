@@ -1,0 +1,105 @@
+﻿{
+    "content":  [
+                    {
+                        "name":  "Meyve ve Sebze",
+                        "subcategories":  [
+                                              "Meyve",
+                                              "Sebze"
+                                          ]
+                    },
+                    {
+                        "name":  "Et, Tavuk ve BalÄ±k",
+                        "subcategories":  [
+                                              "KÄ±rmÄ±zÄ± Et",
+                                              "Beyaz Et",
+                                              "Deniz ÃrÃ¼nleri",
+                                              "ÅarkÃ¼teri",
+                                              "Sakatat"
+                                          ]
+                    },
+                    {
+                        "name":  "SÃ¼t ÃrÃ¼nleri ve KahvaltÄ±lÄ±k",
+                        "subcategories":  [
+                                              "SÃ¼t",
+                                              "Yumurta",
+                                              "Peynir",
+                                              "YoÄurt",
+                                              "Zeytin",
+                                              "TereyaÄÄ± ve Margarin",
+                                              "SÃ¼rÃ¼lebilir ÃrÃ¼nler ve KahvaltÄ±lÄ±k Soslar",
+                                              "Helva Tahin ve Pekmez",
+                                              "Bal ve ReÃ§el",
+                                              "KahvaltÄ±lÄ±k Gevrek Bar ve Granola",
+                                              "Kaymak ve Krema"
+                                          ]
+                    },
+                    {
+                        "name":  "Temel GÄ±da",
+                        "subcategories":  [
+                                              "Ekmek ve Unlu MamÃ¼ller",
+                                              "SÄ±vÄ± YaÄlar",
+                                              "Bakliyat",
+                                              "Åeker ve TatlandÄ±rÄ±cÄ±lar",
+                                              "Pasta Malzemeleri",
+                                              "Un ve Ä°rmik",
+                                              "MantÄ± Makarna ve EriÅte",
+                                              "KetÃ§ap Mayonez Sos ve Sirkeler",
+                                              "Tuz Baharat ve HarÃ§lar",
+                                              "SalÃ§a",
+                                              "TurÅu",
+                                              "Konserve",
+                                              "HazÄ±r GÄ±da",
+                                              "Bebek MamalarÄ±"
+                                          ]
+                    },
+                    {
+                        "name":  "Ä°Ã§ecek",
+                        "subcategories":  [
+                                              "Su",
+                                              "Meyve Suyu",
+                                              "GazlÄ± Ä°Ã§ecekler",
+                                              "GazsÄ±z Ä°Ã§ecekler",
+                                              "Ayran ve Kefir",
+                                              "Maden Suyu",
+                                              "Ãay ve Bitki ÃaylarÄ±",
+                                              "Kahve"
+                                          ]
+                    },
+                    {
+                        "name":  "AtÄ±ÅtÄ±rmalÄ±k ve TatlÄ±",
+                        "subcategories":  [
+                                              "Ãikolata",
+                                              "Gofret",
+                                              "BiskÃ¼vi ve Kraker",
+                                              "Kek",
+                                              "Cips",
+                                              "KuruyemiÅ ve Kuru Meyve",
+                                              "SakÄ±z ve Åekerleme",
+                                              "TatlÄ±lar",
+                                              "Dondurmalar"
+                                          ]
+                    },
+                    {
+                        "name":  "Temizlik ve KiÅisel BakÄ±m ÃrÃ¼nleri",
+                        "subcategories":  [
+                                              "BulaÅÄ±k Temizlik ÃrÃ¼nleri",
+                                              "ÃamaÅÄ±r Temizlik ÃrÃ¼nleri",
+                                              "Genel Temizlik ÃrÃ¼nleri",
+                                              "Mutfak Sarf Malzemeleri",
+                                              "Tuvalet KaÄÄ±dÄ±",
+                                              "KaÄÄ±t Havlu",
+                                              "KaÄÄ±t PeÃ§ete ve Mendil",
+                                              "Islak Mendil",
+                                              "SaÃ§ BakÄ±m",
+                                              "DuÅ Banyo ve Sabun",
+                                              "AÄÄ±z BakÄ±m",
+                                              "Hijyenik Ped",
+                                              "Bebek ve Hasta Bezi",
+                                              "ParfÃ¼m Deodorant Kolonya ve Kokular",
+                                              "Cilt BakÄ±mÄ±",
+                                              "Makyaj",
+                                              "DiÄer Temizlik ve KiÅisel BakÄ±m ÃrÃ¼nleri"
+                                          ]
+                    }
+                ]
+}
