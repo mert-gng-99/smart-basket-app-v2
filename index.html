@@ -10,6 +10,7 @@
   <meta name="theme-color" content="#0b1110" />
   <!-- iOS PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
 
@@ -102,6 +103,43 @@
     .market-tag{display:inline-flex; align-items:center; gap:6px; border:1px solid #1b2a22; border-radius:999px; padding:6px 10px; background:#101b16; font-size:13px}
     .market-tag button{border:none; background:transparent; color:var(--muted); cursor:pointer; font-size:15px; line-height:1}
     .market-tag button:hover{color:var(--danger)}
+    .market-products-card{margin-top:24px}
+    .market-products-header{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap}
+    .market-products-header h2{margin:0; font-size:18px}
+    .market-products-header p{margin:0; font-size:13px}
+    .market-products-search{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0}
+    .market-products-search input{flex:1 1 220px; z-index: 1;}
+    .market-products-search .btn-sm{flex-shrink: 0;}
+    .market-products-list{display:flex; flex-direction:column; gap:12px}
+    .market-product-item{display:flex; justify-content:space-between; gap:14px; border:1px solid var(--border); border-radius:12px; padding:12px; background:#0b1510; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s ease-in-out;}
+    .market-product-item:hover{transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15);}
+    .market-product-info{display:flex; flex-direction:column; gap:6px; flex:1}
+    .market-product-title{font-weight:600; font-size: 17px;}
+    .market-product-meta{font-size:13px; color:var(--muted)}
+    .market-product-actions{display:flex; align-items:center; gap:12px; flex-shrink:0}
+    .market-product-price{font-weight:700; color:var(--accent); font-size:16px}
+    .market-products-card .btn-sm{white-space:nowrap}
+    @media (max-width:640px){
+      .input-row{grid-template-columns:1fr; align-items:stretch}
+      .market-row{flex-direction:column; align-items:stretch}
+      .market-actions{justify-content:flex-start}
+      .market-add-row{flex-direction:column}
+      .market-add-row input{flex:1 1 auto; width:100%}
+      .market-products-header{flex-direction:column; align-items:flex-start}
+      .market-products-search{flex-direction:column; align-items:stretch}
+      .market-products-search .btn-sm{width:100%}
+      .market-product-item{flex-direction:column; align-items:flex-start}
+      .market-product-actions{width:100%; justify-content:space-between}
+      .btn-sm{width:100%; text-align:center}
+    }
+    #productSection .btn-sm {
+        white-space: nowrap;
+    }
+    @media (max-width: 640px) {
+        #productSection .market-products-search .btn-sm {
+            width: 100%;
+        }
+    }
     .suggestions{margin-top:12px; border:1px solid var(--border); border-radius:12px; background:#0b1510; padding:12px; box-shadow:0 12px 30px #00000029; display:flex; flex-direction:column; gap:8px}
     .suggestions[hidden]{display:none}
     .suggestion-message{font-size:12px}
@@ -139,6 +177,37 @@
     /* fun POP when adding */
     .bump{animation:bump .36s cubic-bezier(.2,.7,.2,1)}
     @keyframes bump{0%{transform:scale(1)} 30%{transform:scale(1.06)} 100%{transform:scale(1)}}
+
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .market-products-list {
+        animation: fade-in 0.5s ease-in-out;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .market-products-loading {
+        animation: pulse 1.5s infinite;
+    }
 
     /* ===== Items ===== */
     .items{display:flex; flex-direction:column; gap:10px; margin-top:12px}
@@ -203,6 +272,71 @@
     /* Reduce motion preference */
     @media (prefers-reduced-motion: reduce){
       *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important}
+    }
+
+    /* === Elevated styling === */
+    body{font:16px/1.55 "Inter",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu; background:radial-gradient(1100px 640px at 80% -10%, rgba(45,170,100,.55) 0%, transparent 60%),radial-gradient(900px 540px at -22% 35%, rgba(160,93,21,.35) 0%, transparent 55%),linear-gradient(180deg, var(--bg2) 0%, var(--bg) 45%);}
+    body::before{content:""; position:fixed; inset:-45%; pointer-events:none; background:radial-gradient(circle at center, rgba(255,255,255,.12) 0%, transparent 62%); filter:blur(90px); opacity:.65; animation:floatGlow 24s ease-in-out infinite;}
+    .card{border-radius:20px; padding:18px 20px; border:1px solid color-mix(in srgb, var(--accent) 30%, transparent); background:linear-gradient(160deg, rgba(34,197,94,0.08), rgba(11,17,16,0.92)); box-shadow:0 32px 60px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.04); backdrop-filter:blur(26px); transition:transform .45s cubic-bezier(.19,1,.22,1), border-color .45s ease, box-shadow .45s ease;}
+    .card:hover{transform:translateY(-6px); border-color:color-mix(in srgb, var(--accent) 60%, transparent); box-shadow:0 40px 90px rgba(21,84,54,0.45);}
+    label{text-transform:uppercase; letter-spacing:.08em;}
+    .btn{box-shadow:0 16px 34px rgba(22,84,54,0.35); border:1px solid rgba(34,197,94,0.35);}
+    .btn:hover{border-color:rgba(34,197,94,0.65); box-shadow:0 26px 44px rgba(22,84,54,0.45);}
+    .btn-sm{padding:10px 14px; border-radius:12px;}
+    .market-add{border-radius:16px; padding:12px 14px; box-shadow:0 18px 36px rgba(0,0,0,0.28);}
+    .market-tag{padding:6px 12px; background:linear-gradient(90deg,#12241b,#0a1611); box-shadow:0 12px 22px rgba(0,0,0,0.22);}
+    .market-tag button{font-size:16px; transition:color .18s ease, transform .18s ease;}
+    .market-tag button:hover{color:var(--danger); transform:scale(1.16);}
+    .market-products-card{position:relative; overflow:hidden;}
+    .market-products-card::before{content:""; position:absolute; inset:0; background:linear-gradient(135deg,rgba(34,197,94,.12),transparent); opacity:0; transition:opacity .4s ease;}
+    .market-products-card:hover::before{opacity:1;}
+    .market-products-header h2{font-size:20px; letter-spacing:-.01em;}
+    .market-products-header p{margin:4px 0 0 0;}
+    .market-product-item{border:1px solid rgba(34,197,94,0.18); border-radius:16px; padding:16px; box-shadow:0 24px 48px rgba(0,0,0,0.26); animation:fadeInUp .35s ease forwards;}
+    .market-product-info{min-width:0;}
+    .market-product-title{font-size:16px; letter-spacing:-.01em;}
+    .market-product-meta{text-transform:uppercase; letter-spacing:.12em;}
+    .market-product-price{font-size:18px; text-shadow:0 0 18px rgba(34,197,94,0.35);}
+    .market-products-list .btn-sm{justify-content:center; gap:8px;}
+    .market-products-list .btn-sm::after{content:"→"; font-size:14px; transition:transform .18s ease, opacity .18s ease; opacity:.85;}
+    .market-products-list .btn-sm:hover::after{transform:translateX(3px);}
+    .market-product-item.skeleton{position:relative; overflow:hidden; border-color:#1f2f27; animation:pulse 1.6s ease-in-out infinite;}
+    .market-product-item.skeleton::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.07) 45%, transparent 100%); transform:translateX(-100%); animation:shimmer 1.5s infinite;}
+    header::before{content:""; position:absolute; inset:20px; border-radius:18px; background:radial-gradient(circle at top right, rgba(34,197,94,0.18), transparent 55%); opacity:.7; pointer-events:none;}
+    @keyframes floatGlow{0%,100%{transform:translate(-10%, -5%) scale(1);}50%{transform:translate(4%, 6%) scale(1.12);}}
+    @keyframes shimmer{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
+    @keyframes pulse{0%,100%{opacity:.55;}50%{opacity:1;}}
+    @keyframes fadeInUp{from{opacity:0; transform:translateY(12px);}to{opacity:1; transform:translateY(0);}}
+    @media (max-width:900px){.wrap{padding:18px 16px;}}
+    @media (max-width:640px){.btn-sm{width:100%; text-align:center; justify-content:center;}}
+    @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important;}}
+    /* === End elevated styling === */
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .pagination button {
+        margin: 0 5px;
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background-color: var(--card);
+        color: var(--text);
+        cursor: pointer;
+    }
+
+    .pagination button.active {
+        background-color: var(--accent);
+        color: var(--bg);
+    }
+
+    .pagination button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
     }
   </style>
 </head>
@@ -287,11 +421,37 @@
     </div>
   </header>
 
+  <section class="wrap" id="productSection">
+    <div class="card market-products-card" id="marketProductsCard">
+      <div class="market-products-header">
+        <div>
+          <h2 id="marketProductsTitle">Market ürünleri</h2>
+          <p class="muted" id="marketProductsSubtitle">Seçtiğin marketten ürün ara.</p>
+        </div>
+      </div>
+      <div class="market-products-search">
+        <input id="marketProductsInput" type="search" autocomplete="off" placeholder="Ürün ara" />
+        <button id="marketProductsSearch" class="btn btn-primary btn-sm" type="button">Ara</button>
+        <button id="marketProductsViewAll" class="btn btn-secondary btn-sm" type="button">Tümünü Görüntüle</button>
+        <button id="marketProductsRefresh" class="btn btn-ghost btn-sm" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+            </svg>
+            Yenile
+        </button>
+      </div>
+      <div id="marketProductsStatus" class="muted market-feedback" aria-live="polite"></div>
+      <div id="marketProductsList" class="market-products-list"></div>
+      <div id="pagination" class="pagination"></div>
+    </div>
+  </section>
+
   <main class="wrap" id="emptyState" style="display:none;">
     <div class="card" style="text-align:center; padding:30px" id="emptyText">
       Henüz ürün yok. Ürün adını ve fiyatını yazıp <strong>Sepete Ekle</strong>'ye bas.
     </div>
-  </main>
+</main>
 
   <footer class="totals">
     <div class="wrap totals-row">
@@ -372,6 +532,23 @@
           error: 'Fiyat önerileri şu anda alınamadı.',
           manual: 'Her zaman manuel fiyat girişi yapabilirsin.'
         },
+        products: {
+          title: 'Market ürünleri',
+          subtitle: 'Ürün aramak için bir market seç.',
+          subtitleSelected: marketName => `${marketName} marketinden ürün ara.`,
+          searchPlaceholder: 'Örn: kıyma, süt, peynir...',
+          searchButton: 'Ara',
+          refresh: 'Yenile',
+          loading: 'Ürünler yükleniyor...',
+          emptyMarket: 'Lütfen önce bir market seç.',
+          emptyQuery: 'Ürün aramak için bir anahtar kelime yaz.',
+          emptyResult: 'Bu market için sonuç bulunamadı.',
+          error: 'Ürünler alınırken bir hata oluştu.',
+          resultHint: 'Ürünleri sepete eklemek için butona dokun.',
+          addButton: 'Sepete ekle',
+          added: 'Ürün sepete eklendi.',
+          viewAll: 'Tümünü Görüntüle'
+        },
         add: 'Sepete Ekle', added: 'Sepete atıldı', tick: 'Satın alındı olarak işaretle', del: 'Sil', edit: 'Düzenle',
         editTitle: 'Ürünü Düzenle', save: 'Kaydet', cancel: 'İptal',
         empty: 'Henüz ürün yok. Ürün adını ve fiyatını yazıp <strong>Sepete Ekle</strong> butonuna bas.',
@@ -412,6 +589,23 @@
           empty: 'No price suggestion for that item.',
           error: 'Couldn\'t fetch price suggestions right now.',
           manual: 'You can always enter the price manually.'
+        },
+        products: {
+          title: 'Store products',
+          subtitle: 'Choose a store to browse available products.',
+          subtitleSelected: marketName => `Browse items from ${marketName}.`,
+          searchPlaceholder: 'e.g. minced meat, milk, cheese…',
+          searchButton: 'Search',
+          refresh: 'Refresh',
+          loading: 'Loading items…',
+          emptyMarket: 'Please select a store first.',
+          emptyQuery: 'Type a keyword to search.',
+          emptyResult: 'No results found for this store.',
+          error: 'Couldn\'t load products at the moment.',
+          resultHint: 'Tap the button to add products to your basket.',
+          addButton: 'Add to cart',
+          added: 'Product added to basket.',
+          viewAll: 'View All'
         },
         add: 'Add to Cart', added: 'Added to cart', tick: 'Mark as purchased', del: 'Delete', edit: 'Edit',
         editTitle: 'Edit Product', save: 'Save', cancel: 'Cancel',
@@ -562,6 +756,16 @@
     const customMarketsWrap = document.getElementById('customMarketsWrap');
     const customMarketsTitle = document.getElementById('customMarketsTitle');
     const customMarketsEl = document.getElementById('customMarkets');
+    const productSection = document.getElementById('productSection');
+    const marketProductsCard = document.getElementById('marketProductsCard');
+    const marketProductsTitle = document.getElementById('marketProductsTitle');
+    const marketProductsSubtitle = document.getElementById('marketProductsSubtitle');
+    const marketProductsInput = document.getElementById('marketProductsInput');
+    const marketProductsSearch = document.getElementById('marketProductsSearch');
+    const marketProductsViewAll = document.getElementById('marketProductsViewAll');
+    const marketProductsRefresh = document.getElementById('marketProductsRefresh');
+    const marketProductsStatus = document.getElementById('marketProductsStatus');
+    const marketProductsList = document.getElementById('marketProductsList');
     const suggestionsEl = document.getElementById('suggestions');
     const suggestionMessage = document.getElementById('suggestionMessage');
     const suggestionList = document.getElementById('suggestionList');
@@ -585,12 +789,21 @@
     let selectedMarket = typeof pref.market === 'string' ? pref.market : '';
     let customMarkets = loadCustomMarkets();
     let customLabelMap = new Map();
+    let marketProducts = [];
+    let marketProductsLoading = false;
+    let marketProductsError = null;
+    let lastProductQuery = '';
+    let productCache = new Map();
+    let marketProductLookup = new Map();
+    let recentlyAddedProducts = new Set();
     let suggestionRequestId = 0;
     let suggestionController = null;
     let suggestionDebounce = null;
     let suggestionState = 'hidden';
     let activeSuggestion = null;
     let lastSearchTerm = '';
+    let currentPage = 1;
+    let totalPages = 1;
 
     rebuildCustomLabelMap();
 
@@ -665,6 +878,24 @@
         marketSelect.setAttribute('aria-label', t.labels.market);
         populateMarketOptions();
       }
+      if (marketProductsTitle) marketProductsTitle.textContent = t.products.title;
+      if (marketProductsSubtitle){
+        const prettyName = selectedMarket ? formatMarketName(selectedMarket) : '';
+        marketProductsSubtitle.textContent = selectedMarket
+          ? t.products.subtitleSelected(prettyName)
+          : t.products.subtitle;
+      }
+      if (marketProductsInput){
+        if(document.activeElement !== marketProductsInput){
+          marketProductsInput.value = lastProductQuery;
+        }
+        marketProductsInput.placeholder = t.products.searchPlaceholder;
+      }
+      if (marketProductsSearch) marketProductsSearch.textContent = t.products.searchButton;
+      if (marketProductsRefresh){
+        marketProductsRefresh.textContent = t.products.refresh;
+        marketProductsRefresh.disabled = marketProductsLoading || !selectedMarket || !lastProductQuery;
+      }
       btnAddText.textContent = t.add;
 
       // footer
@@ -675,6 +906,9 @@
       // empty
       emptyText.innerHTML = t.empty;
 
+      renderCustomMarkets();
+      renderMarketProducts();
+      renderPagination();
       updateMarketStatus();
       refreshSuggestionMessage();
 
@@ -712,7 +946,7 @@
       totalEl.textContent = fmt.format(sum);
 
       localStorage.setItem(storeKey, JSON.stringify(items));
-    localStorage.setItem(prefKey, JSON.stringify(pref));
+      localStorage.setItem(prefKey, JSON.stringify(pref));
     }
 
     function renderCustomMarkets(){
@@ -734,6 +968,247 @@
         tag.innerHTML = `<span>${label}</span><button type="button" data-code="${item.code}" aria-label="${strings.removeLabel}">×</button>`;
         customMarketsEl.appendChild(tag);
       });
+    }
+
+    function renderMarketProducts(){
+      if(!marketProductsStatus || !marketProductsList) return;
+      const strings = I18N[pref.lang].products;
+      if (marketProductsRefresh) marketProductsRefresh.disabled = marketProductsLoading || !selectedMarket || !lastProductQuery;
+      if(marketProductsInput && document.activeElement !== marketProductsInput){
+        marketProductsInput.value = lastProductQuery;
+      }
+      if(!selectedMarket){
+        marketProductsStatus.textContent = strings.emptyMarket;
+        marketProductsList.innerHTML = '';
+        return;
+      }
+      if(marketProductsLoading){
+        marketProductsStatus.textContent = strings.loading;
+        marketProductsList.innerHTML = Array.from({ length:3 })
+          .map(()=>'<div class="market-product-item skeleton"><div class="market-product-info"><div class="market-product-title">&nbsp;</div><div class="market-product-meta">&nbsp;</div></div><div class="market-product-actions"><div class="market-product-price">&nbsp;</div><button class="btn btn-primary btn-sm" disabled>...</button></div></div>')
+          .join('');
+        return;
+      }
+      if(!lastProductQuery){
+        marketProductsStatus.textContent = strings.emptyQuery;
+        marketProductsList.innerHTML = '';
+        return;
+      }
+      if(marketProductsError){
+        marketProductsStatus.textContent = strings.error;
+        marketProductsList.innerHTML = '';
+        return;
+      }
+      if(!marketProducts.length){
+        marketProductsStatus.textContent = strings.emptyResult;
+        marketProductsList.innerHTML = '';
+        return;
+      }
+      marketProductsStatus.textContent = strings.resultHint;
+      marketProductsList.innerHTML = '';
+      marketProducts.forEach(product => {
+        const item = document.createElement('div');
+        item.className = 'market-product-item';
+        const metaParts = [];
+        if(product.brand) metaParts.push(product.brand);
+        if(product.volume) metaParts.push(product.volume);
+        if(product.depotName) metaParts.push(product.depotName);
+        const meta = metaParts.length ? `<div class="market-product-meta">${escapeHtml(metaParts.join(' · '))}</div>` : '';
+        const disabled = recentlyAddedProducts.has(product.id);
+        const btnLabel = disabled ? '✓' : strings.addButton;
+        item.innerHTML = `<div class="market-product-info"><div class="market-product-title">${escapeHtml(product.title || '')}</div>${meta}</div><div class="market-product-actions"><div class="market-product-price">${fmt.format(product.price)}</div><button type="button" class="btn btn-primary btn-sm"${disabled?' disabled':''} data-product="${product.id}">${btnLabel}</button></div>`;
+        marketProductsList.appendChild(item);
+      });
+    }
+
+    function renderPagination() {
+      const paginationEl = document.getElementById('pagination');
+      if (!paginationEl) return;
+
+      paginationEl.innerHTML = '';
+
+      if (totalPages <= 1) return;
+
+      const prevButton = document.createElement('button');
+      prevButton.textContent = 'Geri';
+      prevButton.disabled = currentPage === 1;
+      prevButton.addEventListener('click', () => {
+        runMarketProductsSearch(lastProductQuery, currentPage - 1);
+      });
+      paginationEl.appendChild(prevButton);
+
+      // Always show the first page
+      if (currentPage > 2) {
+        const firstButton = document.createElement('button');
+        firstButton.textContent = 1;
+        firstButton.addEventListener('click', () => {
+          runMarketProductsSearch(lastProductQuery, 1);
+        });
+        paginationEl.appendChild(firstButton);
+        if (currentPage > 3) {
+            const ellipsis = document.createElement('span');
+            ellipsis.textContent = '...';
+            paginationEl.appendChild(ellipsis);
+        }
+      }
+
+      // Show current page, and one page before and after
+      for (let i = Math.max(1, currentPage - 1); i <= Math.min(totalPages, currentPage + 1); i++) {
+        const pageButton = document.createElement('button');
+        pageButton.textContent = i;
+        if (i === currentPage) {
+          pageButton.classList.add('active');
+        }
+        pageButton.addEventListener('click', () => {
+          runMarketProductsSearch(lastProductQuery, i);
+        });
+        paginationEl.appendChild(pageButton);
+      }
+
+      // Always show the last page
+        if (currentPage < totalPages - 2) {
+            const ellipsis = document.createElement('span');
+            ellipsis.textContent = '...';
+            paginationEl.appendChild(ellipsis);
+        }
+      if (currentPage < totalPages - 1) {
+        const lastButton = document.createElement('button');
+        lastButton.textContent = totalPages;
+        lastButton.addEventListener('click', () => {
+          runMarketProductsSearch(lastProductQuery, totalPages);
+        });
+        paginationEl.appendChild(lastButton);
+      }
+
+
+      const nextButton = document.createElement('button');
+      nextButton.textContent = 'İleri';
+      nextButton.disabled = currentPage === totalPages;
+      nextButton.addEventListener('click', () => {
+        runMarketProductsSearch(lastProductQuery, currentPage + 1);
+      });
+      paginationEl.appendChild(nextButton);
+    }
+
+    async function runMarketProductsSearch(term, page = 1){
+      let query = (term || '').trim();
+      if (query === '__ALL__') {
+        query = 'a'; // Use a generic search term to get all products
+      }
+      currentPage = page;
+
+      if(marketProductsInput && document.activeElement !== marketProductsInput){
+        marketProductsInput.value = query;
+      }
+      lastProductQuery = query;
+      if(!selectedMarket){
+        marketProducts = [];
+        marketProductLookup = new Map();
+        marketProductsError = null;
+        marketProductsLoading = false;
+        totalPages = 1;
+        renderMarketProducts();
+        return;
+      }
+      if(!query){
+        marketProducts = [];
+        marketProductLookup = new Map();
+        marketProductsError = null;
+        marketProductsLoading = false;
+        totalPages = 1;
+        renderMarketProducts();
+        return;
+      }
+      const normalizedMarket = selectedMarket.toLowerCase();
+      const cacheKey = `${normalizedMarket}|${query}|${page}`;
+      const cached = productCache.get(cacheKey);
+      if(cached && Date.now() - cached.ts < 1000*60*15){
+        marketProducts = cached.items.slice(0,20);
+        marketProductLookup = new Map(marketProducts.map(item => [item.id, item]));
+        totalPages = cached.totalPages;
+        marketProductsError = null;
+        marketProductsLoading = false;
+        renderMarketProducts();
+        return;
+      }
+      marketProductsLoading = true;
+      marketProductsError = null;
+      renderMarketProducts();
+      try{
+        const payload = { keywords: query, page: page - 1, size: 20 };
+        const res = await fetch(`${API.V2}/search`, {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if(!res.ok) throw new Error('market products failed');
+        const data = await res.json();
+        if(query !== lastProductQuery || normalizedMarket !== selectedMarket.toLowerCase()){
+          return;
+        }
+        totalPages = data.totalPages || 1;
+        const results = [];
+        (data.content || []).forEach(product => {
+          (product.productDepotInfoList || []).forEach(depot => {
+            const marketCode = (depot?.marketAdi || '').toLowerCase();
+            if(marketCode !== normalizedMarket) return;
+            if(typeof depot.price !== 'number') return;
+            const id = `${product.id || Math.random().toString(36).slice(2)}-${depot.depotId || marketCode}-${Math.round(depot.price*100)}`;
+            results.push({
+              id,
+              title: product.title || '',
+              brand: product.brand || '',
+              volume: product.refinedVolumeOrWeight || '',
+              depotName: depot.depotName || '',
+              price: depot.price,
+              market: marketCode
+            });
+          });
+        });
+        results.sort((a,b)=>a.price-b.price);
+        marketProducts = results;
+        marketProductLookup = new Map(marketProducts.map(item => [item.id, item]));
+        productCache.set(cacheKey, { items: marketProducts.slice(), totalPages, ts: Date.now() });
+        marketProductsError = null;
+        recentlyAddedProducts = new Set([...recentlyAddedProducts].filter(id => marketProductLookup.has(id)));
+      }catch(err){
+        if(query !== lastProductQuery) return;
+        marketProducts = [];
+        marketProductLookup = new Map();
+        totalPages = 1;
+        marketProductsError = err;
+        recentlyAddedProducts = new Set([...recentlyAddedProducts].filter(id => marketProductLookup.has(id)));
+      }finally{
+        if(query === lastProductQuery){
+          marketProductsLoading = false;
+          renderMarketProducts();
+        }
+      }
+    }
+
+    function addProductToBasket(productOrId, button){
+      const strings = I18N[pref.lang].products;
+      const product = typeof productOrId === 'string'
+        ? marketProductLookup.get(productOrId)
+        : productOrId;
+      if(!product) return;
+      const price = Number(product.price) || 0;
+      const item = {
+        name: product.title || strings.fallbackName || 'Market ürünü',
+        price,
+        done:false,
+        ts: Date.now(),
+        market: selectedMarket || product.market || ''
+      };
+      items.unshift(item);
+      if(product.id) recentlyAddedProducts.add(product.id);
+      render();
+      toast(strings.added);
+      bump(totalBox); bump(countEl);
+      if(button){
+        button.disabled = true;
+        button.textContent = '✓';
+      }
     }
 
     function setMarketFeedback(message){
@@ -1190,6 +1665,7 @@
         selectedMarket = marketSelect.value;
         pref.market = selectedMarket;
         stopSuggestionFetch();
+        recentlyAddedProducts.clear();
         render();
         if(lastSearchTerm && lastSearchTerm.trim().length >= 2){
           loadSuggestions(lastSearchTerm.trim());
@@ -1197,6 +1673,15 @@
           setSuggestionsState('hidden');
         }else{
           setSuggestionsState('hint');
+        }
+        if(lastProductQuery){
+          runMarketProductsSearch(lastProductQuery);
+        }else{
+          marketProducts = [];
+          marketProductLookup = new Map();
+          marketProductsError = null;
+          marketProductsLoading = false;
+          renderMarketProducts();
         }
       });
     }
@@ -1241,6 +1726,53 @@
     });
     editName.addEventListener('keydown', (e)=>{ if(e.key==='Enter') editPrice.focus(); });
     editPrice.addEventListener('keydown', (e)=>{ if(e.key==='Enter') saveEdit(); if(e.key==='Escape') closeEditModal(); });
+
+    if (marketProductsSearch) {
+      marketProductsSearch.addEventListener('click', () => {
+        const term = (marketProductsInput?.value || '').trim();
+        lastProductQuery = term;
+        runMarketProductsSearch(term);
+      });
+    }
+
+    if (marketProductsViewAll) {
+      marketProductsViewAll.addEventListener('click', () => {
+        lastProductQuery = '__ALL__';
+        runMarketProductsSearch(lastProductQuery);
+      });
+    }
+
+    if (marketProductsRefresh) {
+      marketProductsRefresh.addEventListener('click', () => {
+        if(selectedMarket && lastProductQuery){
+          runMarketProductsSearch(lastProductQuery);
+        }else if(selectedMarket && marketProductsInput){
+          runMarketProductsSearch(marketProductsInput.value);
+        }else{
+          renderMarketProducts();
+        }
+      });
+    }
+
+    if (marketProductsInput) {
+      marketProductsInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const term = (marketProductsInput.value || '').trim();
+          lastProductQuery = term;
+          runMarketProductsSearch(term);
+        }
+      });
+    }
+
+    if (marketProductsList) {
+      marketProductsList.addEventListener('click', (e) => {
+        const button = e.target.closest('[data-product]');
+        if (!button) return;
+        const product = marketProductLookup.get(button.dataset.product);
+        if (!product) return;
+        addProductToBasket(product, button);
+      });
+    }
 
     // ================= Language toggle (TR <-> EN) =================
     function setFlag(lang){
