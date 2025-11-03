@@ -1,335 +1,1014 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="tr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Sepet & Bütçe Mini App</title>
-
+  <title>Smart Basket - Premium Market Assistant</title>
+  
   <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#0b1110" />
-  <!-- iOS PWA -->
+  <meta name="theme-color" content="#0a0f0e" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
-
-  <!-- Favicons (opsiyonel) -->
-  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
-  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png" />
-
+  
   <style>
-    /* =========================================================
-       MARKET THEME • i18n • Micro‑interactions & Animations
-       ========================================================= */
-    :root{
-      /* Market vibe palette (fresh green + citrus highlight) */
-      --bg:#0b1110;          /* page background */
-      --bg2:#0a120e;         /* gradient mix */
-      --card:#0f1713;        /* card base */
-      --text:#e6f3ea;        /* primary text */
-      --muted:#93a59a;       /* secondary text */
-      --accent:#22c55e;      /* primary (green) */
-      --accent-2:#f59e0b;    /* highlight (orange) */
-      --danger:#ef4444;      /* destructive */
-      --border:#1a2a22;      /* subtle borders */
-      --ring:#22c55e33;      /* focus ring */
-
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    
+    :root {
+      --bg-primary: #0a0f0e;
+      --bg-secondary: #0d1412;
+      --bg-tertiary: #111918;
+      --surface: #141f1c;
+      --surface-elevated: #1a2623;
+      --text-primary: #f0fdf4;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --accent-primary: #10b981;
+      --accent-secondary: #34d399;
+      --accent-tertiary: #6ee7b7;
+      --accent-orange: #f59e0b;
+      --accent-orange-secondary: #f97316;
+      --price-gradient: linear-gradient(135deg, var(--accent-orange), var(--accent-orange-secondary));
+      --danger: #ef4444;
+      --border: rgba(16, 185, 129, 0.12);
+      --border-strong: rgba(16, 185, 129, 0.24);
+      --glow: rgba(16, 185, 129, 0.25);
+      --glow-orange: rgba(245, 158, 11, 0.35);
+      --shadow: rgba(0, 0, 0, 0.5);
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
 
-    *{box-sizing:border-box; -webkit-tap-highlight-color: transparent}
-    html{height:100%; background:var(--bg); color-scheme: dark; overscroll-behavior-y:none}
-    body{
-      min-height:100dvh; margin:0; color:var(--text);
-      font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;
-      background:
-        radial-gradient(1200px 600px at 80% -10%, #174a3170 0%, transparent 60%),
-        radial-gradient(800px 500px at -10% 20%, #50320e50 0%, transparent 55%),
-        linear-gradient(180deg, var(--bg2) 0%, var(--bg) 40%);
-      background-attachment:fixed;
-      display:flex; flex-direction:column; gap:16px; overflow-x:hidden;
-    }
-    ::selection{background:#22c55e55}
-
-    /* ===== Layout ===== */
-    header{
-      position:sticky; top:0; z-index:3;
-      backdrop-filter:saturate(120%) blur(8px);
-      background:color-mix(in oklab, #0a130f 70%, transparent);
-      border-bottom:1px solid var(--border);
-      padding-top:calc(8px + var(--safe-top));
-    }
-    .wrap{max-width:880px; margin:0 auto; padding:18px 20px}
-
-    .topbar{display:flex; align-items:center; gap:12px; justify-content:space-between}
-    .title{display:flex; align-items:center; gap:12px; margin:0}
-    .title svg{width:26px; height:26px; filter:drop-shadow(0 2px 8px #22c55e55)}
-    .muted{color:var(--muted); font-size:14px}
-
-    .card{
-      background:color-mix(in oklab, var(--card) 90%, #09140e);
-      border:1px solid var(--border);
-      border-radius:16px; padding:14px;
-      box-shadow:0 10px 30px #00000040, inset 0 1px 0 #ffffff08;
-      animation:card-in .45s cubic-bezier(.2,.7,.2,1);
-    }
-    @keyframes card-in{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)}}
-
-    /* ===== Inputs ===== */
-    .input-row{display:grid; grid-template-columns:1.2fr .6fr auto; gap:10px; align-items:end}
-    label{font-size:12px; color:var(--muted); display:block; margin:0 0 6px}
-    input[type="text"], input[type="number"], input[type="search"], select{
-      width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border);
-      background:#0b1510; color:var(--text); outline:none;
-      transition:border-color .18s ease, box-shadow .18s ease, transform .06s ease;
-    }
-    input:focus{border-color:#1f7c46; box-shadow:0 0 0 6px var(--ring); transform:translateY(-1px)}
-    input::placeholder{color:#7ea08b}
-    select:focus{border-color:#1f7c46; box-shadow:0 0 0 6px var(--ring); transform:translateY(-1px)}
-    .market-row{display:flex; gap:12px; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; margin-bottom:16px}
-    .market-control{flex:1; min-width:200px}
-    .market-status{font-size:12px; min-height:18px; padding-bottom:4px}
-    .market-actions{display:flex; gap:8px; align-items:center}
-    .btn-sm{padding:8px 10px; font-size:14px; border-radius:10px}
-    .market-add{margin-bottom:12px; border:1px solid var(--border); border-radius:12px; padding:10px 12px; background:#0b1510}
-    .market-add-row{display:flex; gap:8px; flex-wrap:wrap}
-    .market-add-row input{flex:1 1 220px}
-    .market-feedback{font-size:12px; margin-top:8px; min-height:16px}
-    .market-custom-wrap{margin-bottom:12px}
-    .market-custom-title{font-size:12px; margin-bottom:6px}
-    .market-tags{display:flex; flex-wrap:wrap; gap:8px}
-    .market-tag{display:inline-flex; align-items:center; gap:6px; border:1px solid #1b2a22; border-radius:999px; padding:6px 10px; background:#101b16; font-size:13px}
-    .market-tag button{border:none; background:transparent; color:var(--muted); cursor:pointer; font-size:15px; line-height:1}
-    .market-tag button:hover{color:var(--danger)}
-    .market-products-card{margin-top:24px}
-    .market-products-header{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap}
-    .market-products-header h2{margin:0; font-size:18px}
-    .market-products-header p{margin:0; font-size:13px}
-    .market-products-search{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0}
-    .market-products-search input{flex:1 1 220px; z-index: 1;}
-    .market-products-search .btn-sm{flex-shrink: 0;}
-    .market-products-list{display:flex; flex-direction:column; gap:12px}
-    .market-product-item{display:flex; justify-content:space-between; gap:14px; border:1px solid var(--border); border-radius:12px; padding:12px; background:#0b1510; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s ease-in-out;}
-    .market-product-item:hover{transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15);}
-    .market-product-info{display:flex; flex-direction:column; gap:6px; flex:1}
-    .market-product-title{font-weight:600; font-size: 17px;}
-    .market-product-meta{font-size:13px; color:var(--muted)}
-    .market-product-actions{display:flex; align-items:center; gap:12px; flex-shrink:0}
-    .market-product-price{font-weight:700; color:var(--accent); font-size:16px}
-    .market-products-card .btn-sm{white-space:nowrap}
-    @media (max-width:640px){
-      .input-row{grid-template-columns:1fr; align-items:stretch}
-      .market-row{flex-direction:column; align-items:stretch}
-      .market-actions{justify-content:flex-start}
-      .market-add-row{flex-direction:column}
-      .market-add-row input{flex:1 1 auto; width:100%}
-      .market-products-header{flex-direction:column; align-items:flex-start}
-      .market-products-search{flex-direction:column; align-items:stretch}
-      .market-products-search .btn-sm{width:100%}
-      .market-product-item{flex-direction:column; align-items:flex-start}
-      .market-product-actions{width:100%; justify-content:space-between}
-      .btn-sm{width:100%; text-align:center}
-    }
-    #productSection .btn-sm {
-        white-space: nowrap;
-    }
-    @media (max-width: 640px) {
-        #productSection .market-products-search .btn-sm {
-            width: 100%;
-        }
-    }
-    .suggestions{margin-top:12px; border:1px solid var(--border); border-radius:12px; background:#0b1510; padding:12px; box-shadow:0 12px 30px #00000029; display:flex; flex-direction:column; gap:8px}
-    .suggestions[hidden]{display:none}
-    .suggestion-message{font-size:12px}
-    .suggestion-list{display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto}
-    .suggestion-item{display:flex; flex-direction:column; align-items:flex-start; gap:4px; padding:10px 12px; border-radius:10px; border:1px solid #1b2a22; background:linear-gradient(180deg,#101b16,#0d1612); color:inherit; cursor:pointer; transition:border-color .15s ease, background .15s ease}
-    .suggestion-item:hover{border-color:#1f8a4a; background:linear-gradient(180deg,#122219,#0f1914)}
-    .suggestion-item:active{transform:scale(.98)}
-    .suggestion-item strong{font-weight:600}
-    .suggestion-meta{font-size:12px; color:var(--muted)}
-
-    /* ===== Buttons (micro‑interactions) ===== */
-    button{position:relative; overflow:hidden}
-    .btn{
-      display:inline-flex; align-items:center; gap:8px; padding:12px 14px;
-      border-radius:12px; border:1px solid #1b2a22; cursor:pointer;
-      font-weight:700; color:#e7ffef; background:linear-gradient(180deg,#102019,#0c1712);
-      transition:transform .08s ease, filter .2s ease, border-color .2s ease, box-shadow .2s ease;
-      box-shadow:0 6px 18px rgba(0,0,0,.35);
-    }
-    .btn svg{width:18px; height:18px}
-    .btn:hover{filter:brightness(1.06); border-color:#2a4d3c}
-    .btn:active{transform:translateY(1px) scale(.98)}
-    .btn-primary{background:linear-gradient(180deg,#1f8a4a,#1a6e3c); border-color:#1f8a4a}
-    .btn-primary:hover{box-shadow:0 10px 24px #22c55e33}
-
-    .btn-ghost{
-      background:transparent; border:1px solid #294437; color:#d6f5e4;
-    }
-    .btn-ghost:hover{border-color:#35624d}
-
-    /* ripple for ALL buttons */
-    .ripple{position:absolute; inset:auto; width:8px; height:8px; border-radius:999px; opacity:.25; background:currentColor; transform:translate(-50%,-50%) scale(0); pointer-events:none; animation:ripple .6s ease}
-    @keyframes ripple{to{transform:translate(-50%,-50%) scale(24); opacity:0}}
-
-    /* fun POP when adding */
-    .bump{animation:bump .36s cubic-bezier(.2,.7,.2,1)}
-    @keyframes bump{0%{transform:scale(1)} 30%{transform:scale(1.06)} 100%{transform:scale(1)}}
-
-    @keyframes fade-in {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      margin: 0;
+      padding: 0;
     }
 
-    .market-products-list {
-        animation: fade-in 0.5s ease-in-out;
+    html {
+      height: 100%;
+      background: var(--bg-primary);
+      color-scheme: dark;
+      overflow-x: hidden;
+    }
+
+    body {
+      min-height: 100dvh;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: 
+        radial-gradient(circle at 20% 10%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(52, 211, 153, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 60%, rgba(245, 158, 11, 0.08) 0%, transparent 40%),
+        linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      background-attachment: fixed;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: 
+        radial-gradient(circle at center, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
+      animation: rotate 60s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    ::selection {
+      background: rgba(16, 185, 129, 0.3);
+      color: var(--text-primary);
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: saturate(180%) blur(20px);
+      background: rgba(10, 15, 14, 0.85);
+      border-bottom: 1px solid var(--border);
+      padding-top: calc(12px + var(--safe-top));
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-container {
+      position: relative;
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      display: grid;
+      place-items: center;
+      box-shadow: 0 8px 24px var(--glow), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(2deg); }
+    }
+
+    .logo-container svg {
+      width: 28px;
+      height: 28px;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+    }
+
+    .brand-text h1 {
+      font-size: 24px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent-secondary), var(--accent-tertiary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-text p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    .lang-toggle {
+      position: relative;
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+    }
+
+    .lang-toggle::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .lang-toggle:hover {
+      border-color: var(--accent-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px var(--glow);
+    }
+
+    .lang-toggle:hover::before {
+      opacity: 0.1;
+    }
+
+    .lang-toggle svg {
+      width: 26px;
+      height: 26px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: linear-gradient(135deg, rgba(20, 31, 28, 0.6), rgba(26, 38, 35, 0.4));
+      backdrop-filter: blur(40px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-strong);
+      box-shadow: 
+        0 30px 80px rgba(0, 0, 0, 0.5),
+        0 0 80px var(--glow);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    /* ===== INPUTS ===== */
+    .input-group {
+      display: grid;
+      grid-template-columns: 1.5fr 0.8fr auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-secondary);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    input::placeholder {
+      color: var(--text-muted);
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent-primary);
+      background: var(--surface-elevated);
+      box-shadow: 0 0 0 4px var(--glow), 0 8px 24px rgba(0, 0, 0, 0.3);
+      transform: translateY(-2px);
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 24px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .btn:hover::before {
+      opacity: 1;
+    }
+
+    .btn svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      color: white;
+      border-color: var(--accent-primary);
+      box-shadow: 0 8px 24px var(--glow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px var(--glow);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border-color: var(--border);
+    }
+
+    .btn-ghost:hover {
+      background: var(--surface);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }
+
+    .btn-sm {
+      padding: 10px 16px;
+      font-size: 13px;
+    }
+
+    /* ===== MARKET SECTION ===== */
+    .market-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .market-control {
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .market-status {
+      font-size: 13px;
+      color: var(--text-secondary);
+      min-height: 20px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .market-status::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      box-shadow: 0 0 12px var(--accent-primary);
+      animation: pulse 2s ease-in-out infinite;
     }
 
     @keyframes pulse {
-        0% {
-            transform: scale(1);
-        }
-        50% {
-            transform: scale(1.05);
-        }
-        100% {
-            transform: scale(1);
-        }
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
 
-    .market-products-loading {
-        animation: pulse 1.5s infinite;
+    .market-add {
+      margin-top: 16px;
+      padding: 20px;
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+      background: rgba(20, 31, 28, 0.4);
     }
 
-    /* ===== Items ===== */
-    .items{display:flex; flex-direction:column; gap:10px; margin-top:12px}
-    .item{
-      display:grid; grid-template-columns:auto 1fr auto auto auto; gap:10px; align-items:center;
-      padding:10px 12px; border:1px dashed #244233; border-radius:12px; background:#0c1712;
-      animation:item-in .35s cubic-bezier(.21,.7,.18,1);
-    }
-    @keyframes item-in{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)}}
-    .item.done{opacity:.6; text-decoration:line-through}
-    .pill{font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid #284f3b; color:#c6f1d9; background:#0c1e15}
-    .money{font-variant-numeric:tabular-nums; font-weight:700}
-
-    /* ===== Edit Modal ===== */
-    .modal{position:fixed; inset:0; z-index:999; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.75); backdrop-filter:blur(4px); animation:modal-in .3s ease}
-    .modal.show{display:flex}
-    @keyframes modal-in{from{opacity:0} to{opacity:1}}
-    .modal-card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:20px; width:90%; max-width:400px; box-shadow:0 20px 60px rgba(0,0,0,.6); animation:modal-up .3s cubic-bezier(.2,.7,.2,1)}
-    @keyframes modal-up{from{transform:translateY(20px) scale(.95); opacity:0} to{transform:translateY(0) scale(1); opacity:1}}
-    .modal-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px}
-    .modal-header h3{margin:0; font-size:18px}
-    .modal-actions{display:flex; gap:10px; margin-top:16px}
-
-    /* ===== Footer totals (safe-area aware) ===== */
-    footer.totals{
-      position:sticky; bottom:0; z-index:3;
-      background:color-mix(in oklab, #0a130f 88%, transparent);
-      border-top:1px solid var(--border); backdrop-filter:saturate(120%) blur(8px);
-      padding-bottom:calc(8px + var(--safe-bottom));
-    }
-    .totals-row{display:flex; align-items:center; justify-content:space-between; gap:16px}
-    .badge{display:inline-flex; align-items:center; gap:6px; background:#0e1c15; border:1px solid #1e3a2d; padding:8px 10px; border-radius:12px; font-weight:600}
-    .badge svg{width:16px; height:16px}
-    .total{display:flex; align-items:center; gap:12px; font-weight:800; font-size:18px; background:linear-gradient(180deg,#0e1f17,#0b1914); border:1px solid #224035; padding:10px 14px; border-radius:12px; box-shadow:inset 0 1px 0 #ffffff08, 0 6px 20px #00000040}
-
-    /* ===== Toast ===== */
-    .toast{position:fixed; right:20px; bottom:calc(88px + var(--safe-bottom)); z-index:9999; display:none; background:#0c1a12; border:1px solid #1c3d2a; color:#dbffe6; padding:12px 14px; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,.35)}
-    .toast.show{display:block; animation:slideup .35s ease}
-    @keyframes slideup{from{transform:translateY(12px); opacity:.4} to{transform:translateY(0); opacity:1}}
-
-    /* ===== Language Toggle (top-right flag) ===== */
-    .flag-btn{
-      --ringC:#22c55e55;
-      width:42px; height:42px; border-radius:999px; border:1px solid #1e342a; background:#0d1b14; display:grid; place-items:center; cursor:pointer;
-      box-shadow:0 6px 18px rgba(0,0,0,.35); position:relative; isolation:isolate;
-      transition:transform .08s ease, filter .18s ease, border-color .2s ease;
-    }
-    .flag-btn:hover{filter:brightness(1.06); border-color:#2b4c3e}
-    .flag-btn:active{transform:translateY(1px) scale(.98)}
-    .flag-ring{position:absolute; inset:-6px; border-radius:inherit; border:2px solid var(--ringC); opacity:.6; animation:ring-pulse 1.6s ease infinite}
-    @keyframes ring-pulse{0%{transform:scale(1); opacity:.6} 70%{transform:scale(1.1); opacity:.1} 100%{transform:scale(1); opacity:.6}}
-
-    /* ===== Mobile tweaks ===== */
-    @media (max-width:640px){
-      .wrap{padding:16px 14px}
-      .input-row{grid-template-columns:1fr 1fr auto}
-      .item{grid-template-columns:auto 1fr auto auto}
-      .item .pill{display:none}
-      .modal-card{width:95%; padding:16px}
+    .market-add-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    /* Reduce motion preference */
-    @media (prefers-reduced-motion: reduce){
-      *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important}
+    .market-add-row input {
+      flex: 1;
+      min-width: 200px;
     }
 
-    /* === Elevated styling === */
-    body{font:16px/1.55 "Inter",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu; background:radial-gradient(1100px 640px at 80% -10%, rgba(45,170,100,.55) 0%, transparent 60%),radial-gradient(900px 540px at -22% 35%, rgba(160,93,21,.35) 0%, transparent 55%),linear-gradient(180deg, var(--bg2) 0%, var(--bg) 45%);}
-    body::before{content:""; position:fixed; inset:-45%; pointer-events:none; background:radial-gradient(circle at center, rgba(255,255,255,.12) 0%, transparent 62%); filter:blur(90px); opacity:.65; animation:floatGlow 24s ease-in-out infinite;}
-    .card{border-radius:20px; padding:18px 20px; border:1px solid color-mix(in srgb, var(--accent) 30%, transparent); background:linear-gradient(160deg, rgba(34,197,94,0.08), rgba(11,17,16,0.92)); box-shadow:0 32px 60px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.04); backdrop-filter:blur(26px); transition:transform .45s cubic-bezier(.19,1,.22,1), border-color .45s ease, box-shadow .45s ease;}
-    .card:hover{transform:translateY(-6px); border-color:color-mix(in srgb, var(--accent) 60%, transparent); box-shadow:0 40px 90px rgba(21,84,54,0.45);}
-    label{text-transform:uppercase; letter-spacing:.08em;}
-    .btn{box-shadow:0 16px 34px rgba(22,84,54,0.35); border:1px solid rgba(34,197,94,0.35);}
-    .btn:hover{border-color:rgba(34,197,94,0.65); box-shadow:0 26px 44px rgba(22,84,54,0.45);}
-    .btn-sm{padding:10px 14px; border-radius:12px;}
-    .market-add{border-radius:16px; padding:12px 14px; box-shadow:0 18px 36px rgba(0,0,0,0.28);}
-    .market-tag{padding:6px 12px; background:linear-gradient(90deg,#12241b,#0a1611); box-shadow:0 12px 22px rgba(0,0,0,0.22);}
-    .market-tag button{font-size:16px; transition:color .18s ease, transform .18s ease;}
-    .market-tag button:hover{color:var(--danger); transform:scale(1.16);}
-    .market-products-card{position:relative; overflow:hidden;}
-    .market-products-card::before{content:""; position:absolute; inset:0; background:linear-gradient(135deg,rgba(34,197,94,.12),transparent); opacity:0; transition:opacity .4s ease;}
-    .market-products-card:hover::before{opacity:1;}
-    .market-products-header h2{font-size:20px; letter-spacing:-.01em;}
-    .market-products-header p{margin:4px 0 0 0;}
-    .market-product-item{border:1px solid rgba(34,197,94,0.18); border-radius:16px; padding:16px; box-shadow:0 24px 48px rgba(0,0,0,0.26); animation:fadeInUp .35s ease forwards;}
-    .market-product-info{min-width:0;}
-    .market-product-title{font-size:16px; letter-spacing:-.01em;}
-    .market-product-meta{text-transform:uppercase; letter-spacing:.12em;}
-    .market-product-price{font-size:18px; text-shadow:0 0 18px rgba(34,197,94,0.35);}
-    .market-products-list .btn-sm{justify-content:center; gap:8px;}
-    .market-products-list .btn-sm::after{content:"→"; font-size:14px; transition:transform .18s ease, opacity .18s ease; opacity:.85;}
-    .market-products-list .btn-sm:hover::after{transform:translateX(3px);}
-    .market-product-item.skeleton{position:relative; overflow:hidden; border-color:#1f2f27; animation:pulse 1.6s ease-in-out infinite;}
-    .market-product-item.skeleton::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.07) 45%, transparent 100%); transform:translateX(-100%); animation:shimmer 1.5s infinite;}
-    header::before{content:""; position:absolute; inset:20px; border-radius:18px; background:radial-gradient(circle at top right, rgba(34,197,94,0.18), transparent 55%); opacity:.7; pointer-events:none;}
-    @keyframes floatGlow{0%,100%{transform:translate(-10%, -5%) scale(1);}50%{transform:translate(4%, 6%) scale(1.12);}}
-    @keyframes shimmer{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
-    @keyframes pulse{0%,100%{opacity:.55;}50%{opacity:1;}}
-    @keyframes fadeInUp{from{opacity:0; transform:translateY(12px);}to{opacity:1; transform:translateY(0);}}
-    @media (max-width:900px){.wrap{padding:18px 16px;}}
-    @media (max-width:640px){.btn-sm{width:100%; text-align:center; justify-content:center;}}
-    @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important;}}
-    /* === End elevated styling === */
+    .market-feedback {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 12px;
+      min-height: 18px;
+    }
+
+    .market-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .market-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.05));
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .market-tag:hover {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.1));
+      border-color: var(--border-strong);
+    }
+
+    .market-tag button {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      padding: 0;
+      transition: all 0.3s ease;
+    }
+
+    .market-tag button:hover {
+      color: var(--danger);
+      transform: scale(1.2);
+    }
+
+    /* ===== SUGGESTIONS ===== */
+    .suggestions {
+      margin-top: 16px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(20, 31, 28, 0.8), rgba(26, 38, 35, 0.6));
+      backdrop-filter: blur(20px);
+      animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .suggestions[hidden] {
+      display: none;
+    }
+
+    .suggestion-message {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .suggestion-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .suggestion-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(20, 31, 28, 0.6), rgba(26, 38, 35, 0.4));
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-align: left;
+    }
+
+    .suggestion-item:hover {
+      border-color: var(--accent-primary);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.05));
+      transform: translateX(4px);
+    }
+
+    .suggestion-item strong {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .suggestion-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ===== PRODUCTS SECTION ===== */
+    .products-section {
+      margin-top: 24px;
+    }
+
+    .products-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .products-header h2 {
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0;
+    }
+
+    .products-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin: 4px 0 0 0;
+    }
+
+    .products-search {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .products-search input {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .products-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    .product-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(20, 31, 28, 0.6), rgba(26, 38, 35, 0.4));
+      backdrop-filter: blur(20px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .product-card:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .product-info {
+      flex: 1;
+    }
+
+    .product-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .product-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .product-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .product-price {
+      font-size: 20px;
+      font-weight: 700;
+      background: var(--price-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .product-card.skeleton {
+      animation: skeletonPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes skeletonPulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    /* ===== ITEMS LIST ===== */
+    .items {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .item {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto auto;
+      gap: 12px;
+      align-items: center;
+      padding: 16px 20px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(20, 31, 28, 0.6), rgba(26, 38, 35, 0.4));
+      backdrop-filter: blur(20px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .item:hover {
+      border-color: var(--border-strong);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(52, 211, 153, 0.03));
+    }
+
+    .item.done {
+      opacity: 0.5;
+    }
+
+    .item.done .item-name {
+      text-decoration: line-through;
+    }
+
+    .item-name {
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .item-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .item-price {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--price-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      padding: 8px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+      backdrop-filter: saturate(180%) blur(20px);
+      background: rgba(10, 15, 14, 0.9);
+      border-top: 1px solid var(--border);
+      padding-bottom: calc(16px + var(--safe-bottom));
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
+      margin-top: auto;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.05));
+      border: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .badge svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .total-box {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 24px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      box-shadow: 0 8px 24px var(--glow);
+      font-weight: 700;
+      font-size: 20px;
+      color: white;
+    }
+
+    #totalLabel, .total-currency {
+      color: var(--accent-tertiary);
+      opacity: 0.9;
+    }
+
+    /* ===== MODAL ===== */
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      padding: 20px;
+    }
+
+    .modal.show {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 480px;
+      padding: 32px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(20, 31, 28, 0.95), rgba(26, 38, 35, 0.9));
+      backdrop-filter: blur(40px);
+      border: 1px solid var(--border-strong);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .modal-header h3 {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: calc(120px + var(--safe-bottom));
+      right: 24px;
+      z-index: 9999;
+      padding: 16px 24px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 12px 32px var(--glow);
+      display: none;
+      animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .toast.show {
+      display: block;
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(100px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      text-align: center;
+      padding: 60px 24px;
+    }
+
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 20px;
+      opacity: 0.3;
+    }
+
+    .empty-state p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    /* ===== RIPPLE EFFECT ===== */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.6);
+      transform: scale(0);
+      animation: ripple-animation 0.6s ease-out;
+      pointer-events: none;
+    }
+
+    @keyframes ripple-animation {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    .bump {
+      animation: bump 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes bump {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .wrap {
+        padding: 16px 20px;
+      }
+
+      .brand-text h1 {
+        font-size: 20px;
+      }
+
+      .input-group {
+        grid-template-columns: 1fr;
+      }
+
+      .market-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .market-control {
+        width: 100%;
+      }
+
+      .products-list {
+        grid-template-columns: 1fr;
+      }
+
+      .item {
+        grid-template-columns: auto 1fr auto auto;
+        gap: 4px 10px;
+      }
+
+      .item-price {
+        grid-row: 2;
+        grid-column: 2 / 5;
+        text-align: right;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .badge, .total-box {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
   </style>
 </head>
 <body>
   <header>
     <div class="wrap">
       <div class="topbar">
-        <h1 class="title" id="heroTitle">
-          <!-- cart icon -->
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M6 6h15l-2 8H8L6 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="9" cy="21" r="1" fill="currentColor"/><circle cx="18" cy="21" r="1" fill="currentColor"/>
-          </svg>
-          <span id="appName">Smart Basket</span>
-          <span class="muted" id="heroSub">• hızlı not al, sepete ekle, toplamı gör</span>
-        </h1>
-        <button id="langBtn" class="flag-btn" title="Dil / Language">
-          <span class="flag-ring" aria-hidden="true"></span>
-          <!-- Default: TR flag -->
-          <svg id="flagIcon" viewBox="0 0 640 480" width="24" height="24" aria-hidden="true">
+        <div class="brand">
+          <div class="logo-container">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+              <path d="M6 6h15l-2 8H8L6 2H2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="9" cy="21" r="1" fill="white"/>
+              <circle cx="18" cy="21" r="1" fill="white"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h1 id="appName">Smart Basket</h1>
+            <p id="heroSub">Akıllı alışveriş asistanın</p>
+          </div>
+        </div>
+        <button id="langBtn" class="lang-toggle" aria-label="Change Language">
+          <svg id="flagIcon" viewBox="0 0 640 480">
             <g fill-rule="evenodd" stroke-width="1pt">
               <path fill="#e30a17" d="M0 0h640v480H0z"/>
               <path fill="#fff" d="M406 240c0 66.274-53.726 120-120 120S166 306.274 166 240s53.726-120 120-120 120 53.726 120 120z"/>
@@ -348,118 +1027,137 @@
               <option value="">Tüm marketler</option>
             </select>
           </div>
-          <div class="market-actions">
-            <button id="marketAddToggle" class="btn btn-ghost btn-sm" type="button">Yeni market ekle</button>
-          </div>
+          <button id="marketAddToggle" class="btn btn-ghost btn-sm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Yeni market ekle
+          </button>
         </div>
-        <div id="marketStatus" class="muted market-status" aria-live="polite"></div>
+        
+        <div id="marketStatus" class="market-status"></div>
+
         <div id="marketAddForm" class="market-add" hidden>
           <div class="market-add-row">
-            <input id="marketAddName" type="text" autocomplete="off" placeholder="Market adı" />
-            <button id="marketAddSave" class="btn btn-primary btn-sm" type="button">Kaydet</button>
-            <button id="marketAddCancel" class="btn btn-ghost btn-sm" type="button">İptal</button>
+            <input id="marketAddName" type="text" placeholder="Market adı" autocomplete="off" />
+            <button id="marketAddSave" class="btn btn-primary btn-sm">Kaydet</button>
+            <button id="marketAddCancel" class="btn btn-ghost btn-sm">İptal</button>
           </div>
-          <div id="marketAddFeedback" class="muted market-feedback" aria-live="polite"></div>
+          <div id="marketAddFeedback" class="market-feedback"></div>
         </div>
-        <div id="customMarketsWrap" class="market-custom-wrap">
-          <div id="customMarketsTitle" class="muted market-custom-title"></div>
+
+        <div id="customMarketsWrap">
+          <div id="customMarketsTitle" class="market-status"></div>
           <div id="customMarkets" class="market-tags"></div>
         </div>
-        <div class="input-row">
-          <div>
+
+        <div class="input-group">
+          <div class="form-field">
             <label for="name" id="labelName">Ürün adı</label>
             <input id="name" type="text" placeholder="Örn: Süt 1L" autocomplete="off" />
           </div>
-          <div>
+          <div class="form-field">
             <label for="price" id="labelPrice">Fiyat (₺)</label>
-            <input id="price" type="text" inputmode="decimal" placeholder="Örn: 39,90" />
+            <input id="price" type="text" inputmode="decimal" placeholder="39,90" />
           </div>
-          <div>
+          <div class="form-field">
             <label style="visibility:hidden">.</label>
-            <button id="addBtn" class="btn btn-primary" title="Sepete ekle">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M6 6h15l-2 8H8L6 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M10 12l3 3 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <button id="addBtn" class="btn btn-primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 6h15l-2 8H8L6 2H2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10 12l3 3 6-6" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
               <span id="btnAddText">Sepete Ekle</span>
             </button>
           </div>
         </div>
+
         <div id="suggestions" class="suggestions" hidden>
-          <div id="suggestionMessage" class="muted suggestion-message"></div>
+          <div id="suggestionMessage" class="suggestion-message"></div>
           <div id="suggestionList" class="suggestion-list"></div>
         </div>
+
         <div class="items" id="items"></div>
       </div>
     </div>
   </header>
 
-  <section class="wrap" id="productSection">
-    <div class="card market-products-card" id="marketProductsCard">
-      <div class="market-products-header">
+  <main class="wrap">
+    <div id="emptyState" class="card empty-state" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M6 6h15l-2 8H8L6 2H2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="9" cy="21" r="1"/>
+        <circle cx="18" cy="21" r="1"/>
+      </svg>
+      <p id="emptyText">Henüz ürün yok. Ürün adını ve fiyatını yazıp <strong>Sepete Ekle</strong> butonuna bas.</p>
+    </div>
+
+    <div class="card products-section" id="productSection">
+      <div class="products-header">
         <div>
-          <h2 id="marketProductsTitle">Market ürünleri</h2>
-          <p class="muted" id="marketProductsSubtitle">Seçtiğin marketten ürün ara.</p>
+          <h2 id="marketProductsTitle">Market Ürünleri</h2>
+          <p id="marketProductsSubtitle">Seçtiğin marketten ürün ara.</p>
         </div>
       </div>
-      <div class="market-products-search">
-        <input id="marketProductsInput" type="search" autocomplete="off" placeholder="Ürün ara" />
-        <button id="marketProductsSearch" class="btn btn-primary btn-sm" type="button">Ara</button>
-        <button id="marketProductsRefresh" class="btn btn-ghost btn-sm" type="button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-            </svg>
-            Yenile
+      
+      <div class="products-search">
+        <input id="marketProductsInput" type="search" placeholder="Ürün ara..." autocomplete="off" />
+        <button id="marketProductsSearch" class="btn btn-primary btn-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          Ara
+        </button>
+        <button id="marketProductsRefresh" class="btn btn-ghost btn-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+          </svg>
+          Yenile
         </button>
       </div>
-      <div id="marketProductsStatus" class="muted market-feedback" aria-live="polite"></div>
-      <div id="marketProductsList" class="market-products-list"></div>
-    </div>
-  </section>
 
-  <main class="wrap" id="emptyState" style="display:none;">
-    <div class="card" style="text-align:center; padding:30px" id="emptyText">
-      Henüz ürün yok. Ürün adını ve fiyatını yazıp <strong>Sepete Ekle</strong>'ye bas.
+      <div id="marketProductsStatus" class="market-feedback"></div>
+      <div id="marketProductsList" class="products-list"></div>
     </div>
-</main>
+  </main>
 
-  <footer class="totals">
-    <div class="wrap totals-row">
+  <footer>
+    <div class="wrap footer-content">
       <div class="badge">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M8 6h13l-2 8H9L7 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 6h15l-2 8H8L6 2H2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <span id="count">0 ürün</span>
       </div>
-      <div class="total" id="totalBox">
+      <div class="total-box" id="totalBox">
         <span id="totalLabel">Toplam:</span>
-        <span class="money" id="total">₺0,00</span>
-        <button class="btn btn-ghost" id="clearAll" title="Hepsini temizle">Temizle</button>
+        <span id="total">₺0,00</span>
+        <button class="btn btn-ghost btn-sm" id="clearAll">Temizle</button>
       </div>
     </div>
   </footer>
 
-  <div id="toast" class="toast" role="status" aria-live="polite">Sepete atıldı</div>
+  <div id="toast" class="toast">Sepete eklendi</div>
 
-  <!-- Edit Modal -->
   <div id="editModal" class="modal">
-    <div class="modal-card">
+    <div class="modal-content">
       <div class="modal-header">
-        <h3 id="editModalTitle">Ürün Düzenle</h3>
-        <button id="editModalClose" class="btn btn-ghost" style="padding:8px" title="Kapat">✕</button>
+        <h3 id="editModalTitle">Ürünü Düzenle</h3>
+        <button id="editModalClose" class="btn btn-ghost btn-sm">✕</button>
       </div>
-      <div>
+      <div class="form-field">
         <label for="editName" id="editLabelName">Ürün adı</label>
-        <input id="editName" type="text" autocomplete="off" style="margin-bottom:10px" />
+        <input id="editName" type="text" autocomplete="off" />
       </div>
-      <div>
+      <div class="form-field" style="margin-top: 16px;">
         <label for="editPrice" id="editLabelPrice">Fiyat</label>
         <input id="editPrice" type="text" inputmode="decimal" />
       </div>
       <div class="modal-actions">
-        <button id="editSaveBtn" class="btn btn-primary" style="flex:1">Kaydet</button>
-        <button id="editCancelBtn" class="btn btn-ghost" style="flex:1">İptal</button>
+        <button id="editSaveBtn" class="btn btn-primary" style="flex:1;">Kaydet</button>
+        <button id="editCancelBtn" class="btn btn-ghost" style="flex:1;">İptal</button>
       </div>
     </div>
   </div>
@@ -468,22 +1166,22 @@
     // ================= i18n =================
     const I18N = {
       tr: {
-        appTitle: 'Sepet & Bütçe Mini App',
+        appTitle: 'Smart Basket - Premium Market Assistant',
         appName: 'Smart Basket',
-        hero: 'Hızlı not al, sepete ekle, toplamı gör',
+        hero: 'Akıllı alışveriş asistanın',
         labels: {
           name: 'Ürün adı',
           price: 'Fiyat',
-          pricePh: 'Örn: 39,90',
+          pricePh: '39,90',
           namePh: 'Örn: Süt 1L',
           market: 'Market',
-          marketPh: 'Market seç (opsiyonel)'
+          marketPh: 'Market seç'
         },
         market: {
-          loading: 'Market listesi alınıyor...',
+          loading: 'Marketler yükleniyor...',
           readyAny: count => `${count} marketten fiyat önerileri`,
           readySpecific: name => `${name} fiyatları`,
-          failed: 'Market listesi alınamadı. Listeden kendin seçebilirsin.',
+          failed: 'Market listesi alınamadı.',
           anyOption: 'Tüm marketler',
           addToggle: 'Yeni market ekle',
           addPlaceholder: 'Market adı',
@@ -493,100 +1191,121 @@
           duplicate: 'Bu market zaten listede.',
           removed: 'Market silindi.',
           customTitle: 'Kayıtlı marketler',
-          customEmpty: 'Henüz eklenmiş market yok.',
+          customEmpty: 'Henüz market eklenmedi.',
           removeLabel: 'Kaldır'
         },
         suggestions: {
           hint: 'Ürün adını yaz, fiyat önerileri gelsin.',
           searching: 'Fiyatlar aranıyor...',
           empty: 'Bu ürün için fiyat bulunamadı.',
-          error: 'Fiyat önerileri şu anda alınamadı.',
-          manual: 'Her zaman manuel fiyat girişi yapabilirsin.'
+          error: 'Fiyat önerileri alınamadı.',
+          manual: 'Manuel olarak fiyat girebilirsin.'
         },
         products: {
-          title: 'Market ürünleri',
+          title: 'Market Ürünleri',
           subtitle: 'Ürün aramak için bir market seç.',
-          subtitleSelected: marketName => `${marketName} marketinden ürün ara.`,
-          searchPlaceholder: 'Örn: kıyma, süt, peynir...',
+          subtitleSelected: name => `${name} marketinden ürün ara.`,
+          searchPlaceholder: 'Ürün ara...',
           searchButton: 'Ara',
           refresh: 'Yenile',
           loading: 'Ürünler yükleniyor...',
           emptyMarket: 'Lütfen önce bir market seç.',
-          emptyQuery: 'Ürün aramak için bir anahtar kelime yaz.',
+          emptyQuery: 'Ürün aramak için bir kelime yaz.',
           emptyResult: 'Bu market için sonuç bulunamadı.',
           error: 'Ürünler alınırken bir hata oluştu.',
-          resultHint: 'Ürünleri sepete eklemek için butona dokun.',
+          resultHint: 'Sepete eklemek için butona dokun.',
           addButton: 'Sepete ekle',
           added: 'Ürün sepete eklendi.'
         },
-        add: 'Sepete Ekle', added: 'Sepete atıldı', tick: 'Satın alındı olarak işaretle', del: 'Sil', edit: 'Düzenle',
-        editTitle: 'Ürünü Düzenle', save: 'Kaydet', cancel: 'İptal',
+        add: 'Sepete Ekle',
+        added: 'Sepete eklendi',
+        tick: 'Satın alındı',
+        del: 'Sil',
+        edit: 'Düzenle',
+        editTitle: 'Ürünü Düzenle',
+        save: 'Kaydet',
+        cancel: 'İptal',
         empty: 'Henüz ürün yok. Ürün adını ve fiyatını yazıp <strong>Sepete Ekle</strong> butonuna bas.',
-        count: n => `${n} ürün`, total: 'Toplam:', clear: 'Temizle', confirmClear: 'Tüm ürünler silinsin mi?'
+        count: n => `${n} ürün`,
+        total: 'Toplam:',
+        clear: 'Temizle',
+        confirmClear: 'Tüm ürünler silinsin mi?'
       },
       en: {
-        appTitle: 'Cart & Budget Mini App',
+        appTitle: 'Smart Basket - Premium Market Assistant',
         appName: 'Smart Basket',
-        hero: 'Jot fast, add to cart, see the total',
+        hero: 'Your smart shopping assistant',
         labels: {
           name: 'Product name',
           price: 'Price',
-          pricePh: 'e.g., 4.99',
+          pricePh: '4.99',
           namePh: 'e.g., Milk 1L',
           market: 'Store',
-          marketPh: 'Choose a store (optional)'
+          marketPh: 'Choose a store'
         },
         market: {
           loading: 'Loading stores...',
           readyAny: count => `Suggestions from ${count} stores`,
           readySpecific: name => `Prices from ${name}`,
-          failed: 'Couldn\'t load store list. Please pick manually.',
+          failed: 'Couldn\'t load store list.',
           anyOption: 'All stores',
           addToggle: 'Add store',
           addPlaceholder: 'Store name',
           addSave: 'Save',
           addCancel: 'Cancel',
           saved: 'Store saved.',
-          duplicate: 'That store is already in the list.',
+          duplicate: 'Store already in list.',
           removed: 'Store removed.',
           customTitle: 'Saved stores',
-          customEmpty: 'No saved stores yet.',
+          customEmpty: 'No stores added yet.',
           removeLabel: 'Remove'
         },
         suggestions: {
-          hint: 'Start typing a product to see price suggestions.',
+          hint: 'Type a product name to see price suggestions.',
           searching: 'Looking up prices...',
-          empty: 'No price suggestion for that item.',
-          error: 'Couldn\'t fetch price suggestions right now.',
-          manual: 'You can always enter the price manually.'
+          empty: 'No price found for that item.',
+          error: 'Couldn\'t fetch price suggestions.',
+          manual: 'You can enter the price manually.'
         },
         products: {
-          title: 'Store products',
-          subtitle: 'Choose a store to browse available products.',
-          subtitleSelected: marketName => `Browse items from ${marketName}.`,
-          searchPlaceholder: 'e.g. minced meat, milk, cheese…',
+          title: 'Store Products',
+          subtitle: 'Choose a store to browse products.',
+          subtitleSelected: name => `Browse items from ${name}.`,
+          searchPlaceholder: 'Search products...',
           searchButton: 'Search',
           refresh: 'Refresh',
-          loading: 'Loading items…',
+          loading: 'Loading products...',
           emptyMarket: 'Please select a store first.',
           emptyQuery: 'Type a keyword to search.',
-          emptyResult: 'No results found for this store.',
-          error: 'Couldn\'t load products at the moment.',
-          resultHint: 'Tap the button to add products to your basket.',
+          emptyResult: 'No results found.',
+          error: 'Couldn\'t load products.',
+          resultHint: 'Tap to add products to your basket.',
           addButton: 'Add to cart',
           added: 'Product added to basket.'
         },
-        add: 'Add to Cart', added: 'Added to cart', tick: 'Mark as purchased', del: 'Delete', edit: 'Edit',
-        editTitle: 'Edit Product', save: 'Save', cancel: 'Cancel',
-        empty: 'No items yet. Type a product and a price, then press <strong>Add to Cart</strong>.',
-        count: n => `${n} item${n === 1 ? '' : 's'}`, total: 'Total:', clear: 'Clear', confirmClear: 'Delete all items?'
+        add: 'Add to Cart',
+        added: 'Added to cart',
+        tick: 'Mark as purchased',
+        del: 'Delete',
+        edit: 'Edit',
+        editTitle: 'Edit Product',
+        save: 'Save',
+        cancel: 'Cancel',
+        empty: 'No items yet. Type a product and price, then press <strong>Add to Cart</strong>.',
+        count: n => `${n} item${n === 1 ? '' : 's'}`,
+        total: 'Total:',
+        clear: 'Clear',
+        confirmClear: 'Delete all items?'
       }
     };
 
     const CURRENCY = { tr: 'TRY', en: 'USD' };
-    const LOCALE   = { tr: 'tr-TR', en: 'en-US' };
+    const LOCALE = { tr: 'tr-TR', en: 'en-US' };
+    const API = {
+      V1: 'https://api.marketfiyati.org.tr/api/v1',
+      V2: 'https://api.marketfiyati.org.tr/api/v2'
+    };
 
-    const API = { V1: 'https://api.marketfiyati.org.tr/api/v1', V2: 'https://api.marketfiyati.org.tr/api/v2' };
     const MARKET_LABELS = {
       migros: 'Migros',
       migrosjet: 'Migros Jet',
@@ -601,109 +1320,19 @@
       file: 'FİLE',
       mopas: 'Mopaş Market'
     };
-    const FALLBACK_MARKETS = ['migros','carrefour','a101','bim','sok','tarim_kredi','mopas'];
+
+    const FALLBACK_MARKETS = ['migros', 'carrefour', 'a101', 'bim', 'sok', 'tarim_kredi', 'mopas'];
     const MARKET_STORAGE_KEY = 'smart-basket-custom-markets';
+    const STORE_KEY = 'smart-basket-v1';
+    const PREF_KEY = 'smart-basket-pref';
 
-    function currencySymbol(code){
-      try{
-        const p = new Intl.NumberFormat('en', { style:'currency', currency:code }).formatToParts(0);
-        const cur = p.find(x=>x.type==='currency');
-        return cur ? cur.value : code;
-      }catch{ return code; }
-    }
-
-    function formatMarketName(code){
-      if(!code) return '';
-      const key = String(code).toLowerCase();
-      if(customLabelMap.has(key)) return customLabelMap.get(key);
-      if(Object.prototype.hasOwnProperty.call(MARKET_LABELS, key)) return MARKET_LABELS[key];
-      return key.replace(/[_-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-    }
-
-    function formatPriceInput(value){
-      if(!Number.isFinite(value)) return '';
-      return pref.lang === 'tr'
-        ? value.toFixed(2).replace('.', ',')
-        : value.toFixed(2);
-    }
-
-    function slugifyMarketName(label){
-      return label.normalize('NFKD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '_')
-        .replace(/^_+|_+$/g, '')
-        .substring(0, 40);
-    }
-
-    function loadCustomMarkets(){
-      try{
-        const raw = JSON.parse(localStorage.getItem(MARKET_STORAGE_KEY) || '[]');
-        if(Array.isArray(raw)){
-          return raw
-            .map(item => {
-              if(typeof item === 'string'){
-                return { code: slugifyMarketName(item), label: item };
-              }
-              if(item && typeof item === 'object'){
-                const code = slugifyMarketName(item.code || item.label || '');
-                const label = (item.label || item.code || '').toString().trim();
-                if(!code || !label) return null;
-                return { code, label };
-              }
-              return null;
-            })
-            .filter(Boolean);
-        }
-      }catch(err){}
-      return [];
-    }
-
-    function saveCustomMarkets(){
-      try{
-        localStorage.setItem(MARKET_STORAGE_KEY, JSON.stringify(customMarkets));
-      }catch(err){}
-    }
-
-    function rebuildCustomLabelMap(){
-      customLabelMap = new Map();
-      customMarkets.forEach(item => {
-        if(!item || !item.code) return;
-        const code = String(item.code).toLowerCase();
-        const label = (item.label || '').trim();
-        if(code && label) customLabelMap.set(code, label);
-      });
-    }
-
-    function ensureMarketInList(code){
-      if(!code) return;
-      if(!markets.includes(code)) markets.push(code);
-    }
-
-
-    function refreshSuggestionMessage(){
-      if(!suggestionsEl || suggestionState === 'hidden') return;
-      const strings = I18N[pref.lang].suggestions;
-      let message = '';
-      switch(suggestionState){
-        case 'hint': message = strings.hint; break;
-        case 'loading': message = strings.searching; break;
-        case 'empty': message = strings.empty; break;
-        case 'error': message = strings.error; break;
-        case 'results': message = strings.manual; break;
-        default: message = '';
-      }
-      suggestionMessage.textContent = message;
-    }
-
-    // ================= State & Storage =================
-    const storeKey = 'smart-basket-v1';                 // keep existing data key
-    const prefKey  = 'smart-basket-pref';               // language preference
-    let items = JSON.parse(localStorage.getItem(storeKey) || '[]');
+    // State
+    let items = JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
     const prefDefaults = { lang: 'tr', market: '' };
     let pref = Object.assign({}, prefDefaults);
+    
     try {
-      const savedPref = JSON.parse(localStorage.getItem(prefKey) || '{}');
+      const savedPref = JSON.parse(localStorage.getItem(PREF_KEY) || '{}');
       if (savedPref && typeof savedPref === 'object') {
         pref = Object.assign({}, prefDefaults, savedPref);
       }
@@ -711,46 +1340,6 @@
       pref = Object.assign({}, prefDefaults);
     }
 
-    // ================= Elements =================
-    const nameEl   = document.getElementById('name');
-    const priceEl  = document.getElementById('price');
-    const marketSelect = document.getElementById('marketSelect');
-    const marketStatus = document.getElementById('marketStatus');
-    const marketAddToggle = document.getElementById('marketAddToggle');
-    const marketAddForm = document.getElementById('marketAddForm');
-    const marketAddName = document.getElementById('marketAddName');
-    const marketAddSave = document.getElementById('marketAddSave');
-    const marketAddCancel = document.getElementById('marketAddCancel');
-    const marketAddFeedback = document.getElementById('marketAddFeedback');
-    const customMarketsWrap = document.getElementById('customMarketsWrap');
-    const customMarketsTitle = document.getElementById('customMarketsTitle');
-    const customMarketsEl = document.getElementById('customMarkets');
-    const productSection = document.getElementById('productSection');
-    const marketProductsCard = document.getElementById('marketProductsCard');
-    const marketProductsTitle = document.getElementById('marketProductsTitle');
-    const marketProductsSubtitle = document.getElementById('marketProductsSubtitle');
-    const marketProductsInput = document.getElementById('marketProductsInput');
-    const marketProductsSearch = document.getElementById('marketProductsSearch');
-    const marketProductsRefresh = document.getElementById('marketProductsRefresh');
-    const marketProductsStatus = document.getElementById('marketProductsStatus');
-    const marketProductsList = document.getElementById('marketProductsList');
-    const suggestionsEl = document.getElementById('suggestions');
-    const suggestionMessage = document.getElementById('suggestionMessage');
-    const suggestionList = document.getElementById('suggestionList');
-    const addBtn   = document.getElementById('addBtn');
-    const itemsEl  = document.getElementById('items');
-    const countEl  = document.getElementById('count');
-    const totalEl  = document.getElementById('total');
-    const totalBox = document.getElementById('totalBox');
-    const toastEl  = document.getElementById('toast');
-    const emptyState = document.getElementById('emptyState');
-    const emptyText  = document.getElementById('emptyText');
-    const clearAllBtn= document.getElementById('clearAll');
-
-    const labelMarket = document.getElementById('labelMarket');
-    const labelName = document.getElementById('labelName');
-    const labelPrice= document.getElementById('labelPrice');
-    const btnAddText= document.getElementById('btnAddText');
     let markets = [];
     let marketLoading = true;
     let marketError = false;
@@ -770,16 +1359,52 @@
     let suggestionState = 'hidden';
     let activeSuggestion = null;
     let lastSearchTerm = '';
+    let editingIndex = null;
 
     rebuildCustomLabelMap();
 
-    const totalLabel= document.getElementById('totalLabel');
-    const appName   = document.getElementById('appName');
-    const heroSub   = document.getElementById('heroSub');
-    const langBtn   = document.getElementById('langBtn');
-    const flagIcon  = document.getElementById('flagIcon');
-
-    // Edit modal elements
+    // Elements
+    const nameEl = document.getElementById('name');
+    const priceEl = document.getElementById('price');
+    const marketSelect = document.getElementById('marketSelect');
+    const marketStatus = document.getElementById('marketStatus');
+    const marketAddToggle = document.getElementById('marketAddToggle');
+    const marketAddForm = document.getElementById('marketAddForm');
+    const marketAddName = document.getElementById('marketAddName');
+    const marketAddSave = document.getElementById('marketAddSave');
+    const marketAddCancel = document.getElementById('marketAddCancel');
+    const marketAddFeedback = document.getElementById('marketAddFeedback');
+    const customMarketsWrap = document.getElementById('customMarketsWrap');
+    const customMarketsTitle = document.getElementById('customMarketsTitle');
+    const customMarketsEl = document.getElementById('customMarkets');
+    const marketProductsTitle = document.getElementById('marketProductsTitle');
+    const marketProductsSubtitle = document.getElementById('marketProductsSubtitle');
+    const marketProductsInput = document.getElementById('marketProductsInput');
+    const marketProductsSearch = document.getElementById('marketProductsSearch');
+    const marketProductsRefresh = document.getElementById('marketProductsRefresh');
+    const marketProductsStatus = document.getElementById('marketProductsStatus');
+    const marketProductsList = document.getElementById('marketProductsList');
+    const suggestionsEl = document.getElementById('suggestions');
+    const suggestionMessage = document.getElementById('suggestionMessage');
+    const suggestionList = document.getElementById('suggestionList');
+    const addBtn = document.getElementById('addBtn');
+    const itemsEl = document.getElementById('items');
+    const countEl = document.getElementById('count');
+    const totalEl = document.getElementById('total');
+    const totalBox = document.getElementById('totalBox');
+    const toastEl = document.getElementById('toast');
+    const emptyState = document.getElementById('emptyState');
+    const emptyText = document.getElementById('emptyText');
+    const clearAllBtn = document.getElementById('clearAll');
+    const labelMarket = document.getElementById('labelMarket');
+    const labelName = document.getElementById('labelName');
+    const labelPrice = document.getElementById('labelPrice');
+    const btnAddText = document.getElementById('btnAddText');
+    const totalLabel = document.getElementById('totalLabel');
+    const appName = document.getElementById('appName');
+    const heroSub = document.getElementById('heroSub');
+    const langBtn = document.getElementById('langBtn');
+    const flagIcon = document.getElementById('flagIcon');
     const editModal = document.getElementById('editModal');
     const editModalTitle = document.getElementById('editModalTitle');
     const editName = document.getElementById('editName');
@@ -789,87 +1414,204 @@
     const editSaveBtn = document.getElementById('editSaveBtn');
     const editCancelBtn = document.getElementById('editCancelBtn');
     const editModalClose = document.getElementById('editModalClose');
-    let editingIndex = null;
 
-    // ================= Formatting =================
-    function makeFormatter(){
-      const lang = pref.lang;
-      return new Intl.NumberFormat(LOCALE[lang], { style:'currency', currency: CURRENCY[lang], minimumFractionDigits:2 });
-    }
     let fmt = makeFormatter();
 
-    function parsePriceRaw(v){
-      // tolerant parser regardless of locale
-      if(typeof v !== 'string') return NaN;
-      v = v.trim();
-      // remove currency symbols and spaces
-      v = v.replace(/[\s₺$]/g,'');
-      // try TR style first (1.234,56)
-      let tr = v.replace(/\./g,'').replace(/,/g,'.');
+    // Utility Functions
+    function makeFormatter() {
+      const lang = pref.lang;
+      return new Intl.NumberFormat(LOCALE[lang], {
+        style: 'currency',
+        currency: CURRENCY[lang],
+        minimumFractionDigits: 2
+      });
+    }
+
+    function currencySymbol(code) {
+      try {
+        const p = new Intl.NumberFormat('en', { style: 'currency', currency: code }).formatToParts(0);
+        const cur = p.find(x => x.type === 'currency');
+        return cur ? cur.value : code;
+      } catch {
+        return code;
+      }
+    }
+
+    function formatMarketName(code) {
+      if (!code) return '';
+      const key = String(code).toLowerCase();
+      if (customLabelMap.has(key)) return customLabelMap.get(key);
+      if (Object.prototype.hasOwnProperty.call(MARKET_LABELS, key)) return MARKET_LABELS[key];
+      return key.replace(/[_-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function formatPriceInput(value) {
+      if (!Number.isFinite(value)) return '';
+      return pref.lang === 'tr'
+        ? value.toFixed(2).replace('.', ',')
+        : value.toFixed(2);
+    }
+
+    function slugifyMarketName(label) {
+      return label.normalize('NFKD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '')
+        .substring(0, 40);
+    }
+
+    function loadCustomMarkets() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(MARKET_STORAGE_KEY) || '[]');
+        if (Array.isArray(raw)) {
+          return raw.map(item => {
+            if (typeof item === 'string') {
+              return { code: slugifyMarketName(item), label: item };
+            }
+            if (item && typeof item === 'object') {
+              const code = slugifyMarketName(item.code || item.label || '');
+              const label = (item.label || item.code || '').toString().trim();
+              if (!code || !label) return null;
+              return { code, label };
+            }
+            return null;
+          }).filter(Boolean);
+        }
+      } catch (err) {}
+      return [];
+    }
+
+    function saveCustomMarkets() {
+      try {
+        localStorage.setItem(MARKET_STORAGE_KEY, JSON.stringify(customMarkets));
+      } catch (err) {}
+    }
+
+    function rebuildCustomLabelMap() {
+      customLabelMap = new Map();
+      customMarkets.forEach(item => {
+        if (!item || !item.code) return;
+        const code = String(item.code).toLowerCase();
+        const label = (item.label || '').trim();
+        if (code && label) customLabelMap.set(code, label);
+      });
+    }
+
+    function ensureMarketInList(code) {
+      if (!code) return;
+      if (!markets.includes(code)) markets.push(code);
+    }
+
+    function parsePriceRaw(v) {
+      if (typeof v !== 'string') return NaN;
+      v = v.trim().replace(/[\s₺$]/g, '');
+      let tr = v.replace(/\./g, '').replace(/,/g, '.');
       let n = parseFloat(tr);
-      if(Number.isFinite(n)) return n;
-      // try EN style (1,234.56)
-      let en = v.replace(/,/g,'');
+      if (Number.isFinite(n)) return n;
+      let en = v.replace(/,/g, '');
       n = parseFloat(en);
       return Number.isFinite(n) ? n : NaN;
     }
 
-    // ================= Render =================
-    function render(){
+    function escapeHtml(s) {
+      return s.replace(/[&<>"'`=\/]/g, c => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+        '/': '&#x2F;',
+        '`': '&#x60;',
+        '=': '&#x3D;'
+      }[c]));
+    }
+
+    // Toast
+    let toastTimer = null;
+    function toast(msg) {
+      toastEl.textContent = msg || I18N[pref.lang].added;
+      toastEl.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2000);
+    }
+
+    // Animations
+    function bump(el) {
+      el.classList.remove('bump');
+      void el.offsetWidth;
+      el.classList.add('bump');
+    }
+
+    function pulse(el) {
+      el.style.boxShadow = '0 0 0 6px rgba(239, 68, 68, 0.4)';
+      setTimeout(() => el.style.boxShadow = '', 300);
+    }
+
+    // Ripple effect
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      const r = document.createElement('span');
+      r.className = 'ripple';
+      const rect = btn.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      r.style.width = r.style.height = size + 'px';
+      r.style.left = (e.clientX - rect.left - size / 2) + 'px';
+      r.style.top = (e.clientY - rect.top - size / 2) + 'px';
+      btn.appendChild(r);
+      setTimeout(() => r.remove(), 600);
+    }, { passive: true });
+
+    // Render
+    function render() {
       const lang = pref.lang;
       const t = I18N[lang];
       document.documentElement.lang = lang;
       document.title = t.appTitle;
 
-      // header & form texts
       appName.textContent = t.appName;
       heroSub.textContent = t.hero;
-
       labelName.textContent = t.labels.name;
       labelPrice.textContent = `${t.labels.price} (${currencySymbol(CURRENCY[lang])})`;
       nameEl.placeholder = t.labels.namePh;
       priceEl.placeholder = t.labels.pricePh;
+      
       if (marketAddToggle) marketAddToggle.textContent = t.market.addToggle;
-      if (marketAddToggle) marketAddToggle.title = t.market.addToggle;
       if (marketAddName) marketAddName.placeholder = t.market.addPlaceholder;
       if (marketAddSave) marketAddSave.textContent = t.market.addSave;
       if (marketAddCancel) marketAddCancel.textContent = t.market.addCancel;
-      if (labelMarket) {
-        labelMarket.textContent = t.labels.market;
-      }
+      if (labelMarket) labelMarket.textContent = t.labels.market;
+      
       if (marketSelect) {
         const firstOption = marketSelect.options[0];
         if (firstOption) firstOption.textContent = t.market.anyOption;
-        marketSelect.title = t.labels.marketPh;
-        marketSelect.setAttribute('aria-label', t.labels.market);
         populateMarketOptions();
       }
+
       if (marketProductsTitle) marketProductsTitle.textContent = t.products.title;
-      if (marketProductsSubtitle){
+      if (marketProductsSubtitle) {
         const prettyName = selectedMarket ? formatMarketName(selectedMarket) : '';
         marketProductsSubtitle.textContent = selectedMarket
           ? t.products.subtitleSelected(prettyName)
           : t.products.subtitle;
       }
-      if (marketProductsInput){
-        if(document.activeElement !== marketProductsInput){
+      
+      if (marketProductsInput) {
+        if (document.activeElement !== marketProductsInput) {
           marketProductsInput.value = lastProductQuery;
         }
         marketProductsInput.placeholder = t.products.searchPlaceholder;
       }
-      if (marketProductsSearch) marketProductsSearch.textContent = t.products.searchButton;
-      if (marketProductsRefresh){
-        marketProductsRefresh.textContent = t.products.refresh;
+      
+      if (marketProductsSearch) marketProductsSearch.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>${t.products.searchButton}`;
+      if (marketProductsRefresh) {
         marketProductsRefresh.disabled = marketProductsLoading || !selectedMarket || !lastProductQuery;
       }
-      btnAddText.textContent = t.add;
 
-      // footer
+      btnAddText.textContent = t.add;
       totalLabel.textContent = t.total;
       clearAllBtn.textContent = t.clear;
-      clearAllBtn.title = t.clear;
-
-      // empty
       emptyText.innerHTML = t.empty;
 
       renderCustomMarkets();
@@ -877,7 +1619,6 @@
       updateMarketStatus();
       refreshSuggestionMessage();
 
-      // items
       itemsEl.innerHTML = '';
       emptyState.style.display = items.length === 0 ? 'block' : 'none';
 
@@ -885,168 +1626,226 @@
       items.forEach((it, idx) => {
         sum += it.price;
         const metaParts = [];
-        if(it.market){
+        if (it.market) {
           const marketName = formatMarketName(it.market);
-          if(marketName) metaParts.push(marketName);
+          if (marketName) metaParts.push(marketName);
         }
         metaParts.push(new Date(it.ts).toLocaleString(LOCALE[lang]));
         const meta = escapeHtml(metaParts.join(' · '));
+        
         const row = document.createElement('div');
         row.className = 'item' + (it.done ? ' done' : '');
         row.innerHTML = `
-          <button class="btn btn-ghost" aria-label="${t.tick}" data-act="toggle" data-idx="${idx}" title="✓">✓</button>
+          <button class="btn btn-ghost btn-sm" data-act="toggle" data-idx="${idx}" title="${t.tick}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </button>
           <div>
-            <div style="font-weight:700">${escapeHtml(it.name)}</div>
-            <div class="muted" style="font-size:12px">${meta}</div>
+            <div class="item-name">${escapeHtml(it.name)}</div>
+            <div class="item-meta">${meta}</div>
           </div>
-          <span class="pill money">${fmt.format(it.price)}</span>
-          <button class="btn btn-ghost" aria-label="${t.edit}" data-act="edit" data-idx="${idx}" title="✏️">✏️</button>
-          <button class="btn btn-ghost" aria-label="${t.del}" data-act="del" data-idx="${idx}" title="🗑">🗑️</button>
+          <span class="item-price">${fmt.format(it.price)}</span>
+          <button class="btn btn-ghost btn-sm" data-act="edit" data-idx="${idx}" title="${t.edit}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </button>
+          <button class="btn btn-ghost btn-sm" data-act="del" data-idx="${idx}" title="${t.del}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+          </button>
         `;
-        row.style.willChange = 'transform, opacity';
         itemsEl.appendChild(row);
       });
 
       countEl.textContent = I18N[lang].count(items.length);
-      totalEl.textContent = fmt.format(sum);
+      
+      const totalString = fmt.format(sum);
+      const symbol = currencySymbol(CURRENCY[lang]);
+      const value = totalString.replace(symbol, '').trim();
+      totalEl.innerHTML = `<span class="total-currency">${escapeHtml(symbol)}</span> ${escapeHtml(value)}`;
 
-      localStorage.setItem(storeKey, JSON.stringify(items));
-      localStorage.setItem(prefKey, JSON.stringify(pref));
+      localStorage.setItem(STORE_KEY, JSON.stringify(items));
+      localStorage.setItem(PREF_KEY, JSON.stringify(pref));
     }
 
-    function renderCustomMarkets(){
-      if(!customMarketsEl || !customMarketsTitle) return;
+    function renderCustomMarkets() {
+      if (!customMarketsEl || !customMarketsTitle) return;
       const strings = I18N[pref.lang].market;
       customMarketsTitle.textContent = strings.customTitle;
       customMarketsEl.innerHTML = '';
-      if(!customMarkets.length){
+      
+      if (!customMarkets.length) {
         const emptyNote = document.createElement('div');
-        emptyNote.className = 'muted market-feedback';
+        emptyNote.className = 'market-feedback';
         emptyNote.textContent = strings.customEmpty;
         customMarketsEl.appendChild(emptyNote);
         return;
       }
+      
       customMarkets.forEach(item => {
         const tag = document.createElement('span');
         tag.className = 'market-tag';
-        const label = escapeHtml(item.label);
-        tag.innerHTML = `<span>${label}</span><button type="button" data-code="${item.code}" aria-label="${strings.removeLabel}">×</button>`;
+        tag.innerHTML = `
+          <span>${escapeHtml(item.label)}</span>
+          <button type="button" data-code="${item.code}" aria-label="${strings.removeLabel}">×</button>
+        `;
         customMarketsEl.appendChild(tag);
       });
     }
 
-    function renderMarketProducts(){
-      if(!marketProductsStatus || !marketProductsList) return;
+    function renderMarketProducts() {
+      if (!marketProductsStatus || !marketProductsList) return;
       const strings = I18N[pref.lang].products;
-      if (marketProductsRefresh) marketProductsRefresh.disabled = marketProductsLoading || !selectedMarket || !lastProductQuery;
-      if(marketProductsInput && document.activeElement !== marketProductsInput){
+      
+      if (marketProductsRefresh) {
+        marketProductsRefresh.disabled = marketProductsLoading || !selectedMarket || !lastProductQuery;
+      }
+      
+      if (marketProductsInput && document.activeElement !== marketProductsInput) {
         marketProductsInput.value = lastProductQuery;
       }
-      if(!selectedMarket){
+
+      if (!selectedMarket) {
         marketProductsStatus.textContent = strings.emptyMarket;
         marketProductsList.innerHTML = '';
         return;
       }
-      if(marketProductsLoading){
+
+      if (marketProductsLoading) {
         marketProductsStatus.textContent = strings.loading;
-        marketProductsList.innerHTML = Array.from({ length:3 })
-          .map(()=>'<div class="market-product-item skeleton"><div class="market-product-info"><div class="market-product-title">&nbsp;</div><div class="market-product-meta">&nbsp;</div></div><div class="market-product-actions"><div class="market-product-price">&nbsp;</div><button class="btn btn-primary btn-sm" disabled>...</button></div></div>')
-          .join('');
+        marketProductsList.innerHTML = Array.from({ length: 3 })
+          .map(() => `
+            <div class="product-card skeleton">
+              <div class="product-info">
+                <div class="product-title">&nbsp;</div>
+                <div class="product-meta">&nbsp;</div>
+              </div>
+              <div class="product-footer">
+                <div class="product-price">&nbsp;</div>
+                <button class="btn btn-primary btn-sm" disabled>...</button>
+              </div>
+            </div>
+          `).join('');
         return;
       }
-      if(!lastProductQuery){
+
+      if (!lastProductQuery) {
         marketProductsStatus.textContent = strings.emptyQuery;
         marketProductsList.innerHTML = '';
         return;
       }
-      if(marketProductsError){
+
+      if (marketProductsError) {
         marketProductsStatus.textContent = strings.error;
         marketProductsList.innerHTML = '';
         return;
       }
-      if(!marketProducts.length){
+
+      if (!marketProducts.length) {
         marketProductsStatus.textContent = strings.emptyResult;
         marketProductsList.innerHTML = '';
         return;
       }
+
       marketProductsStatus.textContent = strings.resultHint;
       marketProductsList.innerHTML = '';
+      
       marketProducts.forEach(product => {
-        const item = document.createElement('div');
-        item.className = 'market-product-item';
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        
         const metaParts = [];
-        if(product.brand) metaParts.push(product.brand);
-        if(product.volume) metaParts.push(product.volume);
-        if(product.depotName) metaParts.push(product.depotName);
-        const meta = metaParts.length ? `<div class="market-product-meta">${escapeHtml(metaParts.join(' · '))}</div>` : '';
+        if (product.brand) metaParts.push(product.brand);
+        if (product.volume) metaParts.push(product.volume);
+        if (product.depotName) metaParts.push(product.depotName);
+        const meta = metaParts.length ? `<div class="product-meta">${escapeHtml(metaParts.join(' · '))}</div>` : '';
+        
         const disabled = recentlyAddedProducts.has(product.id);
-        const btnLabel = disabled ? '✓' : strings.addButton;
-        item.innerHTML = `<div class="market-product-info"><div class="market-product-title">${escapeHtml(product.title || '')}</div>${meta}</div><div class="market-product-actions"><div class="market-product-price">${fmt.format(product.price)}</div><button type="button" class="btn btn-primary btn-sm"${disabled?' disabled':''} data-product="${product.id}">${btnLabel}</button></div>`;
-        marketProductsList.appendChild(item);
+        const btnLabel = disabled ? '✓ Eklendi' : strings.addButton;
+        
+        card.innerHTML = `
+          <div class="product-info">
+            <div class="product-title">${escapeHtml(product.title || '')}</div>
+            ${meta}
+          </div>
+          <div class="product-footer">
+            <div class="product-price">${fmt.format(product.price)}</div>
+            <button type="button" class="btn btn-primary btn-sm"${disabled ? ' disabled' : ''} data-product="${product.id}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 6h15l-2 8H8L6 2H2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10 12l3 3 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              ${btnLabel}
+            </button>
+          </div>
+        `;
+        marketProductsList.appendChild(card);
       });
     }
 
-    async function runMarketProductsSearch(term, page = 1){
+    async function runMarketProductsSearch(term, page = 1) {
       const query = (term || '').trim();
-      currentPage = page;
-
-      if(marketProductsInput && document.activeElement !== marketProductsInput){
+      
+      if (marketProductsInput && document.activeElement !== marketProductsInput) {
         marketProductsInput.value = query;
       }
+      
       lastProductQuery = query;
-      if(!selectedMarket){
+
+      if (!selectedMarket || !query) {
         marketProducts = [];
         marketProductLookup = new Map();
         marketProductsError = null;
         marketProductsLoading = false;
-        totalPages = 1;
         renderMarketProducts();
         return;
       }
-      if(!query){
-        marketProducts = [];
-        marketProductLookup = new Map();
-        marketProductsError = null;
-        marketProductsLoading = false;
-        totalPages = 1;
-        renderMarketProducts();
-        return;
-      }
+
       const normalizedMarket = selectedMarket.toLowerCase();
       const cacheKey = `${normalizedMarket}|${query}|${page}`;
       const cached = productCache.get(cacheKey);
-      if(cached && Date.now() - cached.ts < 1000*60*15){
-        marketProducts = cached.items.slice(0,20);
+      
+      if (cached && Date.now() - cached.ts < 1000 * 60 * 15) {
+        marketProducts = cached.items.slice(0, 20);
         marketProductLookup = new Map(marketProducts.map(item => [item.id, item]));
-        totalPages = cached.totalPages;
         marketProductsError = null;
         marketProductsLoading = false;
         renderMarketProducts();
         return;
       }
+
       marketProductsLoading = true;
       marketProductsError = null;
       renderMarketProducts();
-      try{
+
+      try {
         const payload = { keywords: query, page: page - 1, size: 20 };
         const res = await fetch(`${API.V2}/search`, {
-          method:'POST',
-          headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
           body: JSON.stringify(payload)
         });
-        if(!res.ok) throw new Error('market products failed');
+        
+        if (!res.ok) throw new Error('market products failed');
         const data = await res.json();
-        if(query !== lastProductQuery || normalizedMarket !== selectedMarket.toLowerCase()){
+        
+        if (query !== lastProductQuery || normalizedMarket !== selectedMarket.toLowerCase()) {
           return;
         }
-        totalPages = data.totalPages || 1;
+
         const results = [];
         (data.content || []).forEach(product => {
           (product.productDepotInfoList || []).forEach(depot => {
             const marketCode = (depot?.marketAdi || '').toLowerCase();
-            if(marketCode !== normalizedMarket) return;
-            if(typeof depot.price !== 'number') return;
-            const id = `${product.id || Math.random().toString(36).slice(2)}-${depot.depotId || marketCode}-${Math.round(depot.price*100)}`;
+            if (marketCode !== normalizedMarket) return;
+            if (typeof depot.price !== 'number') return;
+            
+            const id = `${product.id || Math.random().toString(36).slice(2)}-${depot.depotId || marketCode}-${Math.round(depot.price * 100)}`;
             results.push({
               id,
               title: product.title || '',
@@ -1058,301 +1857,271 @@
             });
           });
         });
-        results.sort((a,b)=>a.price-b.price);
+
+        results.sort((a, b) => a.price - b.price);
         marketProducts = results;
         marketProductLookup = new Map(marketProducts.map(item => [item.id, item]));
-        productCache.set(cacheKey, { items: marketProducts.slice(), totalPages, ts: Date.now() });
+        productCache.set(cacheKey, { items: marketProducts.slice(), ts: Date.now() });
         marketProductsError = null;
         recentlyAddedProducts = new Set([...recentlyAddedProducts].filter(id => marketProductLookup.has(id)));
-      }catch(err){
-        if(query !== lastProductQuery) return;
+      } catch (err) {
+        if (query !== lastProductQuery) return;
         marketProducts = [];
         marketProductLookup = new Map();
-        totalPages = 1;
         marketProductsError = err;
         recentlyAddedProducts = new Set([...recentlyAddedProducts].filter(id => marketProductLookup.has(id)));
-      }finally{
-        if(query === lastProductQuery){
+      } finally {
+        if (query === lastProductQuery) {
           marketProductsLoading = false;
           renderMarketProducts();
         }
       }
     }
 
-    function addProductToBasket(productOrId, button){
+    function addProductToBasket(productOrId, button) {
       const strings = I18N[pref.lang].products;
       const product = typeof productOrId === 'string'
         ? marketProductLookup.get(productOrId)
         : productOrId;
-      if(!product) return;
+      
+      if (!product) return;
+      
       const price = Number(product.price) || 0;
       const item = {
-        name: product.title || strings.fallbackName || 'Market ürünü',
+        name: product.title || 'Market ürünü',
         price,
-        done:false,
+        done: false,
         ts: Date.now(),
         market: selectedMarket || product.market || ''
       };
+      
       items.unshift(item);
-      if(product.id) recentlyAddedProducts.add(product.id);
+      if (product.id) recentlyAddedProducts.add(product.id);
       render();
       toast(strings.added);
-      bump(totalBox); bump(countEl);
-      if(button){
+      bump(totalBox);
+      bump(countEl);
+      
+      if (button) {
         button.disabled = true;
-        button.textContent = '✓';
+        button.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          ✓ Eklendi
+        `;
       }
     }
 
-    function setMarketFeedback(message){
-      if(!marketAddFeedback) return;
-      marketAddFeedback.textContent = message || '';
-    }
-
-    function openMarketForm(){
-      if(!marketAddForm) return;
-      marketAddForm.hidden = false;
-      setMarketFeedback('');
-      if(marketAddName){
-        marketAddName.value = '';
-        marketAddName.focus();
-      }
-    }
-
-    function closeMarketForm(){
-      if(!marketAddForm) return;
-      marketAddForm.hidden = true;
-      setMarketFeedback('');
-      if(marketAddName) marketAddName.value = '';
-    }
-
-    function handleCustomMarketSave(){
-      if(!marketAddName) return;
-      const raw = marketAddName.value || '';
-      const label = raw.trim();
-      const t = I18N[pref.lang].market;
-      if(!label){
-        setMarketFeedback(t.addPlaceholder);
-        marketAddName.focus();
-        return;
-      }
-      const code = slugifyMarketName(label);
-      if(!code){
-        setMarketFeedback(t.addPlaceholder);
-        marketAddName.focus();
-        return;
-      }
-      const existing = new Set([...FALLBACK_MARKETS, ...markets, ...customMarkets.map(m => m.code)]);
-      if(existing.has(code)){
-        setMarketFeedback(t.duplicate);
-        marketAddName.focus();
-        marketAddName.select();
-        return;
-      }
-      const entry = { code, label };
-      customMarkets.push(entry);
-      customMarkets.sort((a,b)=> a.label.localeCompare(b.label, pref.lang === 'tr' ? 'tr' : 'en', { sensitivity:'base' }));
-      rebuildCustomLabelMap();
-      saveCustomMarkets();
-      ensureMarketInList(code);
-      selectedMarket = code;
-      pref.market = code;
-      localStorage.setItem(prefKey, JSON.stringify(pref));
-      populateMarketOptions();
-      renderCustomMarkets();
-      updateMarketStatus();
-      if(marketSelect) marketSelect.value = code;
-      closeMarketForm();
-      toast(t.saved);
-      setSuggestionsState('hint');
-    }
-
-    function removeCustomMarket(code){
-      const idx = customMarkets.findIndex(item => item.code === code);
-      if(idx === -1) return;
-      customMarkets.splice(idx,1);
-      rebuildCustomLabelMap();
-      saveCustomMarkets();
-      const idxInMarkets = markets.indexOf(code);
-      if(idxInMarkets !== -1 && !FALLBACK_MARKETS.includes(code)){
-        markets.splice(idxInMarkets,1);
-      }
-      if(selectedMarket === code){
-        selectedMarket = '';
-        pref.market = '';
-        localStorage.setItem(prefKey, JSON.stringify(pref));
-        if(marketSelect) marketSelect.value = '';
-      }
-      populateMarketOptions();
-      renderCustomMarkets();
-      updateMarketStatus();
-      toast(I18N[pref.lang].market.removed);
-    }
-    async function initMarkets(){
-      marketLoading = true;
-      marketError = false;
-      updateMarketStatus();
-      const collected = new Set();
-      const queries = ['sut','et'];
-      for(const term of queries){
-        try{
-          const codes = await collectMarketsFromSearch(term);
-          codes.forEach(code => collected.add(code));
-        }catch(err){ /* ignore individual failures */ }
-      }
-      if(!collected.size){
-        markets = FALLBACK_MARKETS.slice();
-        marketError = true;
-      }else{
-        markets = Array.from(collected);
-      }
-      populateMarketOptions();
-      marketLoading = false;
-      updateMarketStatus();
-    }
-
-    async function collectMarketsFromSearch(term){
-      const payload = { keywords: term, pages: 0, size: 40 };
-      const res = await fetch(`${API.V2}/search`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if(!res.ok) throw new Error('market search failed');
-      const data = await res.json();
-      const codes = new Set();
-      (data.content || []).forEach(product => {
-        (product.productDepotInfoList || []).forEach(depot => {
-          if(depot && depot.marketAdi){
-            codes.add(String(depot.marketAdi).toLowerCase());
-          }
-        });
-      });
-      return Array.from(codes);
-    }
-
-    function populateMarketOptions(){
-      if(!marketSelect) return;
-      while(marketSelect.options.length > 1){
+    // Market functions
+    function populateMarketOptions() {
+      if (!marketSelect) return;
+      
+      while (marketSelect.options.length > 1) {
         marketSelect.remove(1);
       }
+
       const pool = new Set([...FALLBACK_MARKETS, ...markets, ...customMarkets.map(m => m.code)]);
       const seen = new Set();
-      const sorted = Array.from(pool).filter(Boolean).sort((a,b)=> formatMarketName(a).localeCompare(formatMarketName(b), pref.lang === 'tr' ? 'tr' : 'en', { sensitivity:'base' }));
+      const sorted = Array.from(pool).filter(Boolean).sort((a, b) =>
+        formatMarketName(a).localeCompare(formatMarketName(b), pref.lang === 'tr' ? 'tr' : 'en', { sensitivity: 'base' })
+      );
+
       sorted.forEach(code => {
-        if(!code || seen.has(code)) return;
+        if (!code || seen.has(code)) return;
         seen.add(code);
-        const option = document.createElement("option");
+        const option = document.createElement('option');
         option.value = code;
         option.textContent = formatMarketName(code);
         marketSelect.appendChild(option);
       });
-      const previousMarket = pref.market || "";
-      if(selectedMarket && !seen.has(selectedMarket)){
-        selectedMarket = "";
+
+      if (selectedMarket && !seen.has(selectedMarket)) {
+        selectedMarket = '';
       }
+      
       marketSelect.value = selectedMarket;
-      if(previousMarket !== selectedMarket){
-        pref.market = selectedMarket;
-        localStorage.setItem(prefKey, JSON.stringify(pref));
-      }
     }
 
-    function updateMarketStatus(){
-      if(!marketStatus) return;
+    function updateMarketStatus() {
+      if (!marketStatus) return;
       const t = I18N[pref.lang];
-      if(marketLoading){
+      
+      if (marketLoading) {
         marketStatus.textContent = t.market.loading;
         return;
       }
-      if(marketError){
+      
+      if (marketError) {
         marketStatus.textContent = t.market.failed;
         return;
       }
-      if(selectedMarket){
+      
+      if (selectedMarket) {
         marketStatus.textContent = t.market.readySpecific(formatMarketName(selectedMarket));
-      }else{
+      } else {
         const pool = new Set([...markets, ...customMarkets.map(m => m.code)]);
         const count = pool.size || FALLBACK_MARKETS.length;
         marketStatus.textContent = t.market.readyAny(count);
       }
     }
 
-    function setSuggestionsState(state){
+    async function initMarkets() {
+      marketLoading = true;
+      marketError = false;
+      updateMarketStatus();
+      
+      const collected = new Set();
+      const queries = ['sut', 'et'];
+      
+      for (const term of queries) {
+        try {
+          const codes = await collectMarketsFromSearch(term);
+          codes.forEach(code => collected.add(code));
+        } catch (err) {}
+      }
+
+      if (!collected.size) {
+        markets = FALLBACK_MARKETS.slice();
+        marketError = true;
+      } else {
+        markets = Array.from(collected);
+      }
+
+      populateMarketOptions();
+      marketLoading = false;
+      updateMarketStatus();
+    }
+
+    async function collectMarketsFromSearch(term) {
+      const payload = { keywords: term, pages: 0, size: 40 };
+      const res = await fetch(`${API.V2}/search`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      if (!res.ok) throw new Error('market search failed');
+      const data = await res.json();
+      const codes = new Set();
+      
+      (data.content || []).forEach(product => {
+        (product.productDepotInfoList || []).forEach(depot => {
+          if (depot && depot.marketAdi) {
+            codes.add(String(depot.marketAdi).toLowerCase());
+          }
+        });
+      });
+      
+      return Array.from(codes);
+    }
+
+    // Suggestions
+    function setSuggestionsState(state) {
       suggestionState = state;
-      if(!suggestionsEl) return;
+      if (!suggestionsEl) return;
       const strings = I18N[pref.lang].suggestions;
-      if(state === 'hidden'){
+
+      if (state === 'hidden') {
         suggestionsEl.hidden = true;
         suggestionList.innerHTML = '';
         suggestionMessage.textContent = '';
         return;
       }
+
       suggestionsEl.hidden = false;
       suggestionList.innerHTML = '';
-      if(state === 'hint'){
+
+      if (state === 'hint') {
         suggestionMessage.textContent = strings.hint;
-      }else if(state === 'loading'){
+      } else if (state === 'loading') {
         suggestionMessage.textContent = strings.searching;
-      }else if(state === 'empty'){
+      } else if (state === 'empty') {
         suggestionMessage.textContent = strings.empty;
         appendSuggestionInfo(strings.manual);
-      }else if(state === 'error'){
+      } else if (state === 'error') {
         suggestionMessage.textContent = strings.error;
         appendSuggestionInfo(strings.manual);
-      }else{
+      } else {
         suggestionMessage.textContent = '';
       }
     }
 
-    function renderSuggestions(items){
-      if(!suggestionsEl) return;
+    function refreshSuggestionMessage() {
+      if (!suggestionsEl || suggestionState === 'hidden') return;
+      const strings = I18N[pref.lang].suggestions;
+      let message = '';
+      
+      switch (suggestionState) {
+        case 'hint': message = strings.hint; break;
+        case 'loading': message = strings.searching; break;
+        case 'empty': message = strings.empty; break;
+        case 'error': message = strings.error; break;
+        case 'results': message = strings.manual; break;
+        default: message = '';
+      }
+      
+      suggestionMessage.textContent = message;
+    }
+
+    function renderSuggestions(items) {
+      if (!suggestionsEl) return;
       suggestionState = 'results';
       const strings = I18N[pref.lang].suggestions;
       suggestionsEl.hidden = false;
       suggestionMessage.textContent = strings.manual;
       suggestionList.innerHTML = '';
+
       items.forEach(item => {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'suggestion-item';
         const marketLabel = item.market ? formatMarketName(item.market) : I18N[pref.lang].market.anyOption;
-        btn.innerHTML = `<strong>${escapeHtml(item.title || '')}</strong><div class="suggestion-meta">${escapeHtml(marketLabel)} · ${fmt.format(item.price)}</div>`;
+        btn.innerHTML = `
+          <strong>${escapeHtml(item.title || '')}</strong>
+          <div class="suggestion-meta">${escapeHtml(marketLabel)} · ${fmt.format(item.price)}</div>
+        `;
         btn.addEventListener('click', () => applySuggestion(item));
         suggestionList.appendChild(btn);
       });
     }
 
-    function appendSuggestionInfo(text){
+    function appendSuggestionInfo(text) {
       const info = document.createElement('div');
       info.className = 'suggestion-meta';
       info.textContent = text;
       suggestionList.appendChild(info);
     }
 
-    async function loadSuggestions(term){
+    async function loadSuggestions(term) {
       lastSearchTerm = term;
       const currentId = ++suggestionRequestId;
-      if(typeof AbortController !== 'undefined'){
-        if(suggestionController) suggestionController.abort();
+      
+      if (typeof AbortController !== 'undefined') {
+        if (suggestionController) suggestionController.abort();
         suggestionController = new AbortController();
       }
+
       setSuggestionsState('loading');
-      try{
+
+      try {
         const payload = { keywords: term, pages: 0, size: 20 };
         const res = await fetch(`${API.V2}/search`, {
-          method:'POST',
-          headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
           body: JSON.stringify(payload),
           signal: suggestionController ? suggestionController.signal : undefined
         });
-        if(!res.ok) throw new Error('search failed');
+
+        if (!res.ok) throw new Error('search failed');
         const data = await res.json();
-        if(currentId !== suggestionRequestId) return;
+        
+        if (currentId !== suggestionRequestId) return;
+
         let items = [];
         (data.content || []).forEach(product => {
           (product.productDepotInfoList || []).forEach(depot => {
-            if(!depot || typeof depot.price !== 'number') return;
+            if (!depot || typeof depot.price !== 'number') return;
             items.push({
               id: product.id,
               title: product.title,
@@ -1361,36 +2130,39 @@
             });
           });
         });
-        if(selectedMarket){
+
+        if (selectedMarket) {
           items = items.filter(item => item.market === selectedMarket);
         }
+
         const seen = new Set();
         const top = [];
-        for(const item of items){
+        for (const item of items) {
           const key = `${item.market}|${item.title}`;
-          if(seen.has(key)) continue;
+          if (seen.has(key)) continue;
           seen.add(key);
           top.push(item);
-          if(top.length >= 8) break;
+          if (top.length >= 8) break;
         }
-        if(!top.length){
+
+        if (!top.length) {
           setSuggestionsState('empty');
-        }else{
+        } else {
           renderSuggestions(top);
         }
-      }catch(err){
-        if(err && err.name === 'AbortError') return;
-        if(currentId !== suggestionRequestId) return;
+      } catch (err) {
+        if (err && err.name === 'AbortError') return;
+        if (currentId !== suggestionRequestId) return;
         setSuggestionsState('error');
-      }finally{
-        if(currentId === suggestionRequestId){
+      } finally {
+        if (currentId === suggestionRequestId) {
           suggestionController = null;
         }
       }
     }
 
-    function applySuggestion(item){
-      if(!item) return;
+    function applySuggestion(item) {
+      if (!item) return;
       activeSuggestion = item;
       nameEl.value = item.title || '';
       priceEl.value = formatPriceInput(item.price);
@@ -1398,64 +2170,51 @@
       nameEl.focus();
     }
 
-    function scheduleSuggestions(term){
-      if(suggestionDebounce) clearTimeout(suggestionDebounce);
+    function scheduleSuggestions(term) {
+      if (suggestionDebounce) clearTimeout(suggestionDebounce);
       suggestionDebounce = setTimeout(() => loadSuggestions(term), 320);
     }
 
-    function stopSuggestionFetch(){
-      if(suggestionController){
-        try{ suggestionController.abort(); }catch(err){}
+    function stopSuggestionFetch() {
+      if (suggestionController) {
+        try {
+          suggestionController.abort();
+        } catch (err) {}
         suggestionController = null;
       }
     }
 
-    function onNameInput(){
-      activeSuggestion = null;
-      const term = (nameEl.value || '').trim();
-      if(term.length < 2){
-        lastSearchTerm = term;
-        stopSuggestionFetch();
-        if(term.length === 0){
-          setSuggestionsState('hidden');
-        }else{
-          setSuggestionsState('hint');
-        }
-        return;
-      }
-      lastSearchTerm = term;
-      scheduleSuggestions(term);
-    }
-
-
-    // ================= Toast =================
-    let toastTimer = null;
-    function toast(msg){
-      toastEl.textContent = msg || I18N[pref.lang].added;
-      toastEl.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 1400);
-    }
-
-    // ================= Actions =================
-    function addItem(){
+    // Actions
+    function addItem() {
       const t = I18N[pref.lang];
       const name = (nameEl.value || '').trim();
       const price = parsePriceRaw((priceEl.value || '').trim());
-      if(!name){ nameEl.focus(); pulse(nameEl); return; }
-      if(!Number.isFinite(price) || price < 0){ priceEl.focus(); pulse(priceEl); return; }
+      
+      if (!name) {
+        nameEl.focus();
+        pulse(nameEl);
+        return;
+      }
+      
+      if (!Number.isFinite(price) || price < 0) {
+        priceEl.focus();
+        pulse(priceEl);
+        return;
+      }
 
       const item = {
         name,
         price,
-        done:false,
+        done: false,
         ts: Date.now(),
         market: activeSuggestion && activeSuggestion.market
           ? activeSuggestion.market
           : (selectedMarket || '')
       };
+
       items.unshift(item);
-      nameEl.value = ''; priceEl.value = '';
+      nameEl.value = '';
+      priceEl.value = '';
       stopSuggestionFetch();
       activeSuggestion = null;
       lastSearchTerm = '';
@@ -1463,12 +2222,13 @@
       nameEl.focus();
       render();
 
-      // micro animations
       toast(t.added);
-      bump(totalBox); bump(countEl); bump(addBtn);
+      bump(totalBox);
+      bump(countEl);
+      bump(addBtn);
     }
 
-    function editItem(idx){
+    function editItem(idx) {
       editingIndex = idx;
       const item = items[idx];
       const t = I18N[pref.lang];
@@ -1480,8 +2240,7 @@
       editCancelBtn.textContent = t.cancel;
 
       editName.value = item.name;
-      // format price for editing
-      editPrice.value = pref.lang === 'tr' 
+      editPrice.value = pref.lang === 'tr'
         ? item.price.toFixed(2).replace('.', ',')
         : item.price.toFixed(2);
 
@@ -1489,87 +2248,209 @@
       setTimeout(() => editName.focus(), 100);
     }
 
-    function saveEdit(){
-      if(editingIndex === null) return;
+    function saveEdit() {
+      if (editingIndex === null) return;
       const name = (editName.value || '').trim();
       const price = parsePriceRaw((editPrice.value || '').trim());
+
+      if (!name) {
+        editName.focus();
+        pulse(editName);
+        return;
+      }
       
-      if(!name){ editName.focus(); pulse(editName); return; }
-      if(!Number.isFinite(price) || price < 0){ editPrice.focus(); pulse(editPrice); return; }
+      if (!Number.isFinite(price) || price < 0) {
+        editPrice.focus();
+        pulse(editPrice);
+        return;
+      }
 
       items[editingIndex].name = name;
       items[editingIndex].price = price;
       closeEditModal();
       render();
-      bump(totalBox); bump(countEl);
+      bump(totalBox);
+      bump(countEl);
     }
 
-    function closeEditModal(){
+    function closeEditModal() {
       editModal.classList.remove('show');
       editingIndex = null;
       editName.value = '';
       editPrice.value = '';
     }
 
-    function bump(el){ el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+    function setMarketFeedback(message) {
+      if (!marketAddFeedback) return;
+      marketAddFeedback.textContent = message || '';
+    }
 
-    function pulse(el){ el.style.boxShadow = '0 0 0 6px #ef444455'; setTimeout(()=> el.style.boxShadow = '', 250); }
+    function openMarketForm() {
+      if (!marketAddForm) return;
+      marketAddForm.hidden = false;
+      setMarketFeedback('');
+      if (marketAddName) {
+        marketAddName.value = '';
+        marketAddName.focus();
+      }
+    }
 
-    document.addEventListener('click', (e)=>{
-      if(!suggestionsEl || suggestionsEl.hidden) return;
-      if(e.target === nameEl) return;
-      if(suggestionsEl.contains(e.target)) return;
-      stopSuggestionFetch();
-      setSuggestionsState('hidden');
-    });
+    function closeMarketForm() {
+      if (!marketAddForm) return;
+      marketAddForm.hidden = true;
+      setMarketFeedback('');
+      if (marketAddName) marketAddName.value = '';
+    }
 
-    // generic ripple on all buttons
-    document.addEventListener('click', (e)=>{
-      const btn = e.target.closest('button');
-      if(!btn) return;
-      const r = document.createElement('span');
-      r.className = 'ripple';
-      const rect = btn.getBoundingClientRect();
-      r.style.left = (e.clientX - rect.left) + 'px';
-      r.style.top  = (e.clientY - rect.top)  + 'px';
-      btn.appendChild(r);
-      setTimeout(()=>r.remove(), 650);
-    }, { passive:true });
+    function handleCustomMarketSave() {
+      if (!marketAddName) return;
+      const label = (marketAddName.value || '').trim();
+      const t = I18N[pref.lang].market;
 
-    // list actions
-    itemsEl.addEventListener('click', (e)=>{
-      const btn = e.target.closest('button'); if(!btn) return;
-      const idx = +btn.dataset.idx; const act = btn.dataset.act; if(Number.isNaN(idx)) return;
-      if(act === 'del'){ items.splice(idx,1); render(); bump(totalBox); bump(countEl); }
-      else if(act === 'toggle'){ items[idx].done = !items[idx].done; render(); }
-      else if(act === 'edit'){ editItem(idx); }
-    });
+      if (!label) {
+        setMarketFeedback(t.addPlaceholder);
+        marketAddName.focus();
+        return;
+      }
 
+      const code = slugifyMarketName(label);
+      if (!code) {
+        setMarketFeedback(t.addPlaceholder);
+        marketAddName.focus();
+        return;
+      }
+
+      const existing = new Set([...FALLBACK_MARKETS, ...markets, ...customMarkets.map(m => m.code)]);
+      if (existing.has(code)) {
+        setMarketFeedback(t.duplicate);
+        marketAddName.focus();
+        marketAddName.select();
+        return;
+      }
+
+      const entry = { code, label };
+      customMarkets.push(entry);
+      customMarkets.sort((a, b) => a.label.localeCompare(b.label, pref.lang === 'tr' ? 'tr' : 'en', { sensitivity: 'base' }));
+      rebuildCustomLabelMap();
+      saveCustomMarkets();
+      ensureMarketInList(code);
+      selectedMarket = code;
+      pref.market = code;
+      localStorage.setItem(PREF_KEY, JSON.stringify(pref));
+      populateMarketOptions();
+      renderCustomMarkets();
+      updateMarketStatus();
+      if (marketSelect) marketSelect.value = code;
+      closeMarketForm();
+      toast(t.saved);
+      setSuggestionsState('hint');
+    }
+
+    function removeCustomMarket(code) {
+      const idx = customMarkets.findIndex(item => item.code === code);
+      if (idx === -1) return;
+      
+      customMarkets.splice(idx, 1);
+      rebuildCustomLabelMap();
+      saveCustomMarkets();
+      
+      const idxInMarkets = markets.indexOf(code);
+      if (idxInMarkets !== -1 && !FALLBACK_MARKETS.includes(code)) {
+        markets.splice(idxInMarkets, 1);
+      }
+
+      if (selectedMarket === code) {
+        selectedMarket = '';
+        pref.market = '';
+        localStorage.setItem(PREF_KEY, JSON.stringify(pref));
+        if (marketSelect) marketSelect.value = '';
+      }
+
+      populateMarketOptions();
+      renderCustomMarkets();
+      updateMarketStatus();
+      toast(I18N[pref.lang].market.removed);
+    }
+
+    function setFlag(lang) {
+      const isTR = lang === 'tr';
+      flagIcon.innerHTML = isTR
+        ? `<g fill-rule="evenodd" stroke-width="1pt">
+            <path fill="#e30a17" d="M0 0h640v480H0z"/>
+            <path fill="#fff" d="M406 240c0 66.274-53.726 120-120 120S166 306.274 166 240s53.726-120 120-120 120 53.726 120 120z"/>
+            <path fill="#e30a17" d="M413 240c0 52.467-42.533 95-95 95s-95-42.533-95-95 42.533-95 95-95 95 42.533 95 95z"/>
+            <path fill="#fff" d="m421 240-60.78 19.021 37.6-51.733v65.424l-37.6-51.733z"/>
+          </g>`
+        : `<g fill-rule="evenodd">
+            <path fill="#b22234" d="M0 0h741v390H0z"/>
+            <path fill="#fff" d="M0 45h741v30H0zm0 60h741v30H0zm0 60h741v30H0zm0 60h741v30H0zm0 60h741v30H0zm0 60h741v30H0z"/>
+            <path fill="#3c3b6e" d="M0 0h296v210H0z"/>
+          </g>`;
+    }
+
+    // Event Listeners
     addBtn.addEventListener('click', addItem);
-    nameEl.addEventListener('input', onNameInput);
-    nameEl.addEventListener('focus', ()=>{ if(!(nameEl.value||'').trim()) setSuggestionsState('hint'); });
-    nameEl.addEventListener('blur', ()=>{ setTimeout(()=>{ if(!suggestionsEl) return; const active=document.activeElement; if(active && (active===nameEl || suggestionsEl.contains(active))) return; setSuggestionsState('hidden'); }, 150); });
-    nameEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') priceEl.focus(); });
-    priceEl.addEventListener('input', ()=>{ activeSuggestion = null; });
-    priceEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') addItem(); });
+    nameEl.addEventListener('input', () => {
+      activeSuggestion = null;
+      const term = (nameEl.value || '').trim();
+      if (term.length < 2) {
+        lastSearchTerm = term;
+        stopSuggestionFetch();
+        if (term.length === 0) {
+          setSuggestionsState('hidden');
+        } else {
+          setSuggestionsState('hint');
+        }
+        return;
+      }
+      lastSearchTerm = term;
+      scheduleSuggestions(term);
+    });
 
-    if(marketSelect){
-      marketSelect.addEventListener('change', ()=>{
+    nameEl.addEventListener('focus', () => {
+      if (!(nameEl.value || '').trim()) setSuggestionsState('hint');
+    });
+
+    nameEl.addEventListener('blur', () => {
+      setTimeout(() => {
+        if (!suggestionsEl) return;
+        const active = document.activeElement;
+        if (active && (active === nameEl || suggestionsEl.contains(active))) return;
+        setSuggestionsState('hidden');
+      }, 150);
+    });
+
+    nameEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') priceEl.focus();
+    });
+
+    priceEl.addEventListener('input', () => {
+      activeSuggestion = null;
+    });
+
+    priceEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') addItem();
+    });
+
+    if (marketSelect) {
+      marketSelect.addEventListener('change', () => {
         selectedMarket = marketSelect.value;
         pref.market = selectedMarket;
         stopSuggestionFetch();
         recentlyAddedProducts.clear();
         render();
-        if(lastSearchTerm && lastSearchTerm.trim().length >= 2){
+        
+        if (lastSearchTerm && lastSearchTerm.trim().length >= 2) {
           loadSuggestions(lastSearchTerm.trim());
-        }else if(!lastSearchTerm){
+        } else if (!lastSearchTerm) {
           setSuggestionsState('hidden');
-        }else{
+        } else {
           setSuggestionsState('hint');
         }
-        if(lastProductQuery){
+        
+        if (lastProductQuery) {
           runMarketProductsSearch(lastProductQuery);
-        }else{
+        } else {
           marketProducts = [];
           marketProductLookup = new Map();
           marketProductsError = null;
@@ -1579,46 +2460,67 @@
       });
     }
 
-    if(marketAddToggle){
-      marketAddToggle.addEventListener('click', ()=>{
-        if(marketAddForm && !marketAddForm.hidden){ closeMarketForm(); }
-        else{ openMarketForm(); }
+    if (marketAddToggle) {
+      marketAddToggle.addEventListener('click', () => {
+        if (marketAddForm && !marketAddForm.hidden) {
+          closeMarketForm();
+        } else {
+          openMarketForm();
+        }
       });
     }
-    if(marketAddCancel){ marketAddCancel.addEventListener('click', closeMarketForm); }
-    if(marketAddSave){ marketAddSave.addEventListener('click', handleCustomMarketSave); }
-    if(marketAddName){
-      marketAddName.addEventListener('keydown', (e)=>{
-        if(e.key === 'Enter'){
+
+    if (marketAddCancel) {
+      marketAddCancel.addEventListener('click', closeMarketForm);
+    }
+
+    if (marketAddSave) {
+      marketAddSave.addEventListener('click', handleCustomMarketSave);
+    }
+
+    if (marketAddName) {
+      marketAddName.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
           e.preventDefault();
           handleCustomMarketSave();
-        }else if(e.key === 'Escape'){
+        } else if (e.key === 'Escape') {
           closeMarketForm();
         }
       });
     }
-    if(customMarketsEl){
-      customMarketsEl.addEventListener('click', (e)=>{
+
+    if (customMarketsEl) {
+      customMarketsEl.addEventListener('click', (e) => {
         const btn = e.target.closest('button[data-code]');
-        if(!btn) return;
+        if (!btn) return;
         removeCustomMarket(btn.dataset.code);
       });
     }
 
-    clearAllBtn.addEventListener('click', ()=>{
-      if(items.length===0) return;
-      if(confirm(I18N[pref.lang].confirmClear)){ items = []; render(); }
+    clearAllBtn.addEventListener('click', () => {
+      if (items.length === 0) return;
+      if (confirm(I18N[pref.lang].confirmClear)) {
+        items = [];
+        render();
+      }
     });
 
-    // Edit modal events
     editSaveBtn.addEventListener('click', saveEdit);
     editCancelBtn.addEventListener('click', closeEditModal);
     editModalClose.addEventListener('click', closeEditModal);
-    editModal.addEventListener('click', (e)=>{
-      if(e.target === editModal) closeEditModal();
+    
+    editModal.addEventListener('click', (e) => {
+      if (e.target === editModal) closeEditModal();
     });
-    editName.addEventListener('keydown', (e)=>{ if(e.key==='Enter') editPrice.focus(); });
-    editPrice.addEventListener('keydown', (e)=>{ if(e.key==='Enter') saveEdit(); if(e.key==='Escape') closeEditModal(); });
+
+    editName.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') editPrice.focus();
+    });
+
+    editPrice.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') saveEdit();
+      if (e.key === 'Escape') closeEditModal();
+    });
 
     if (marketProductsSearch) {
       marketProductsSearch.addEventListener('click', () => {
@@ -1627,12 +2529,14 @@
         runMarketProductsSearch(term);
       });
     }
+
+    if (marketProductsRefresh) {
       marketProductsRefresh.addEventListener('click', () => {
-        if(selectedMarket && lastProductQuery){
+        if (selectedMarket && lastProductQuery) {
           runMarketProductsSearch(lastProductQuery);
-        }else if(selectedMarket && marketProductsInput){
+        } else if (selectedMarket && marketProductsInput) {
           runMarketProductsSearch(marketProductsInput.value);
-        }else{
+        } else {
           renderMarketProducts();
         }
       });
@@ -1658,50 +2562,48 @@
       });
     }
 
-    // ================= Language toggle (TR <-> EN) =================
-    function setFlag(lang){
-      const isTR = lang==='tr';
-      // swap inline SVG flag
-      flagIcon.innerHTML = isTR
-        ? `
-          <g fill-rule="evenodd" stroke-width="1pt">
-            <path fill="#e30a17" d="M0 0h640v480H0z"/>
-            <path fill="#fff" d="M406 240c0 66.274-53.726 120-120 120S166 306.274 166 240s53.726-120 120-120 120 53.726 120 120z"/>
-            <path fill="#e30a17" d="M413 240c0 52.467-42.533 95-95 95s-95-42.533-95-95 42.533-95 95-95 95 42.533 95 95z"/>
-            <path fill="#fff" d="m421 240-60.78 19.021 37.6-51.733v65.424l-37.6-51.733z"/>
-          </g>`
-        : `
-          <g fill-rule="evenodd" stroke-width="1pt">
-            <path fill="#b22234" d="M0 0h741v390H0z"/>
-            <path fill="#fff" d="M0 45h741v30H0zm0 60h741v30H0zm0 60h741v30H0zm0 60h741v30H0zm0 60h741v30H0zm0 60h741v30H0z"/>
-            <path fill="#3c3b6e" d="M0 0h296v210H0z"/>
-            <!-- stars simplified for brevity -->
-            <g fill="#fff" transform="scale(0.8)">
-              <circle cx="30" cy="20" r="4"/><circle cx="60" cy="35" r="4"/><circle cx="90" cy="20" r="4"/>
-              <circle cx="120" cy="35" r="4"/><circle cx="150" cy="20" r="4"/><circle cx="180" cy="35" r="4"/>
-              <circle cx="210" cy="20" r="4"/><circle cx="240" cy="35" r="4"/>
-            </g>
-          </g>`;
-    }
+    itemsEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      const idx = +btn.dataset.idx;
+      const act = btn.dataset.act;
+      if (Number.isNaN(idx)) return;
+      
+      if (act === 'del') {
+        items.splice(idx, 1);
+        render();
+        bump(totalBox);
+        bump(countEl);
+      } else if (act === 'toggle') {
+        items[idx].done = !items[idx].done;
+        render();
+      } else if (act === 'edit') {
+        editItem(idx);
+      }
+    });
 
-    langBtn.addEventListener('click', ()=>{
+    langBtn.addEventListener('click', () => {
       pref.lang = pref.lang === 'tr' ? 'en' : 'tr';
       setFlag(pref.lang);
       fmt = makeFormatter();
       render();
-      // subtle feedback
       bump(langBtn);
     });
 
-    // ================= Utilities =================
-    function escapeHtml(s){ return s.replace(/[&<>"'`=\/]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;","/":"&#x2F;","`":"&#x60;","=":"&#x3D;"}[c])); }
+    document.addEventListener('click', (e) => {
+      if (!suggestionsEl || suggestionsEl.hidden) return;
+      if (e.target === nameEl) return;
+      if (suggestionsEl.contains(e.target)) return;
+      stopSuggestionFetch();
+      setSuggestionsState('hidden');
+    });
 
-    // ================= Init =================
+    // Initialize
     setFlag(pref.lang);
     render();
     initMarkets();
 
-    // PWA: Service Worker kaydı (GitHub Pages için göreli yol)
+    // PWA: Service Worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js').catch(console.error);
@@ -1710,21 +2612,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
