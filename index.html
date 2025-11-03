@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="tr">
 <head>
   <meta charset="utf-8" />
@@ -311,33 +311,6 @@
     @media (max-width:640px){.btn-sm{width:100%; text-align:center; justify-content:center;}}
     @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important;}}
     /* === End elevated styling === */
-
-    .pagination {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 20px;
-    }
-
-    .pagination button {
-        margin: 0 5px;
-        padding: 8px 12px;
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        background-color: var(--card);
-        color: var(--text);
-        cursor: pointer;
-    }
-
-    .pagination button.active {
-        background-color: var(--accent);
-        color: var(--bg);
-    }
-
-    .pagination button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
   </style>
 </head>
 <body>
@@ -432,7 +405,7 @@
       <div class="market-products-search">
         <input id="marketProductsInput" type="search" autocomplete="off" placeholder="Ürün ara" />
         <button id="marketProductsSearch" class="btn btn-primary btn-sm" type="button">Ara</button>
-        <button id="marketProductsViewAll" class="btn btn-secondary btn-sm" type="button">Tümünü Görüntüle</button>
+        <!--<button id="marketProductsViewAll" class="btn btn-secondary btn-sm" type="button">Tümünü Görüntüle</button>-->
         <button id="marketProductsRefresh" class="btn btn-ghost btn-sm" type="button">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
@@ -443,7 +416,6 @@
       </div>
       <div id="marketProductsStatus" class="muted market-feedback" aria-live="polite"></div>
       <div id="marketProductsList" class="market-products-list"></div>
-      <div id="pagination" class="pagination"></div>
     </div>
   </section>
 
@@ -802,8 +774,6 @@
     let suggestionState = 'hidden';
     let activeSuggestion = null;
     let lastSearchTerm = '';
-    let currentPage = 1;
-    let totalPages = 1;
 
     rebuildCustomLabelMap();
 
@@ -908,7 +878,6 @@
 
       renderCustomMarkets();
       renderMarketProducts();
-      renderPagination();
       updateMarketStatus();
       refreshSuggestionMessage();
 
@@ -975,7 +944,7 @@
       const strings = I18N[pref.lang].products;
       if (marketProductsRefresh) marketProductsRefresh.disabled = marketProductsLoading || !selectedMarket || !lastProductQuery;
       if(marketProductsInput && document.activeElement !== marketProductsInput){
-        marketProductsInput.value = lastProductQuery;
+        marketProductsInput.value = lastProductQuery === '__ALL__' ? '' : lastProductQuery;
       }
       if(!selectedMarket){
         marketProductsStatus.textContent = strings.emptyMarket;
@@ -1019,75 +988,6 @@
         item.innerHTML = `<div class="market-product-info"><div class="market-product-title">${escapeHtml(product.title || '')}</div>${meta}</div><div class="market-product-actions"><div class="market-product-price">${fmt.format(product.price)}</div><button type="button" class="btn btn-primary btn-sm"${disabled?' disabled':''} data-product="${product.id}">${btnLabel}</button></div>`;
         marketProductsList.appendChild(item);
       });
-    }
-
-    function renderPagination() {
-      const paginationEl = document.getElementById('pagination');
-      if (!paginationEl) return;
-
-      paginationEl.innerHTML = '';
-
-      if (totalPages <= 1) return;
-
-      const prevButton = document.createElement('button');
-      prevButton.textContent = 'Geri';
-      prevButton.disabled = currentPage === 1;
-      prevButton.addEventListener('click', () => {
-        runMarketProductsSearch(lastProductQuery, currentPage - 1);
-      });
-      paginationEl.appendChild(prevButton);
-
-      // Always show the first page
-      if (currentPage > 2) {
-        const firstButton = document.createElement('button');
-        firstButton.textContent = 1;
-        firstButton.addEventListener('click', () => {
-          runMarketProductsSearch(lastProductQuery, 1);
-        });
-        paginationEl.appendChild(firstButton);
-        if (currentPage > 3) {
-            const ellipsis = document.createElement('span');
-            ellipsis.textContent = '...';
-            paginationEl.appendChild(ellipsis);
-        }
-      }
-
-      // Show current page, and one page before and after
-      for (let i = Math.max(1, currentPage - 1); i <= Math.min(totalPages, currentPage + 1); i++) {
-        const pageButton = document.createElement('button');
-        pageButton.textContent = i;
-        if (i === currentPage) {
-          pageButton.classList.add('active');
-        }
-        pageButton.addEventListener('click', () => {
-          runMarketProductsSearch(lastProductQuery, i);
-        });
-        paginationEl.appendChild(pageButton);
-      }
-
-      // Always show the last page
-        if (currentPage < totalPages - 2) {
-            const ellipsis = document.createElement('span');
-            ellipsis.textContent = '...';
-            paginationEl.appendChild(ellipsis);
-        }
-      if (currentPage < totalPages - 1) {
-        const lastButton = document.createElement('button');
-        lastButton.textContent = totalPages;
-        lastButton.addEventListener('click', () => {
-          runMarketProductsSearch(lastProductQuery, totalPages);
-        });
-        paginationEl.appendChild(lastButton);
-      }
-
-
-      const nextButton = document.createElement('button');
-      nextButton.textContent = 'İleri';
-      nextButton.disabled = currentPage === totalPages;
-      nextButton.addEventListener('click', () => {
-        runMarketProductsSearch(lastProductQuery, currentPage + 1);
-      });
-      paginationEl.appendChild(nextButton);
     }
 
     async function runMarketProductsSearch(term, page = 1){
