@@ -312,8 +312,8 @@
       tr: {
         appTitle: 'Sepet & Bütçe Mini App',
         appName: 'Smart Basket',
-        hero: '• hızlı not al, sepete ekle, toplamı gör',
-                labels: {
+        hero: 'Hızlı not al, sepete ekle, toplamı gör',
+        labels: {
           name: 'Ürün adı',
           price: 'Fiyat',
           pricePh: 'Örn: 39,90',
@@ -336,15 +336,15 @@
           manual: 'Her zaman manuel fiyat girişi yapabilirsin.'
         },
         add: 'Sepete Ekle', added: 'Sepete atıldı', tick: 'Satın alındı olarak işaretle', del: 'Sil', edit: 'Düzenle',
-        editTitle: 'Ürün Düzenle', save: 'Kaydet', cancel: 'İptal',
+        editTitle: 'Ürünü Düzenle', save: 'Kaydet', cancel: 'İptal',
         empty: 'Henüz ürün yok. Ürün adını ve fiyatını yazıp <strong>Sepete Ekle</strong> butonuna bas.',
         count: n => `${n} ürün`, total: 'Toplam:', clear: 'Temizle', confirmClear: 'Tüm ürünler silinsin mi?'
       },
       en: {
         appTitle: 'Cart & Budget Mini App',
         appName: 'Smart Basket',
-        hero: '• jot fast, add to cart, see the total',
-                labels: {
+        hero: 'Jot fast, add to cart, see the total',
+        labels: {
           name: 'Product name',
           price: 'Price',
           pricePh: 'e.g., 4.99',
@@ -355,9 +355,7 @@
         market: {
           loading: 'Loading stores...',
           readyAny: count => `Suggestions from ${count} stores`,
-
           readySpecific: name => `Prices from ${name}`,
-
           failed: 'Couldn\'t load store list. Please pick manually.',
           anyOption: 'All stores'
         },
@@ -371,7 +369,7 @@
         add: 'Add to Cart', added: 'Added to cart', tick: 'Mark as purchased', del: 'Delete', edit: 'Edit',
         editTitle: 'Edit Product', save: 'Save', cancel: 'Cancel',
         empty: 'No items yet. Type a product and a price, then press <strong>Add to Cart</strong>.',
-        count: n => `${n} ${n===1?'item':'items'}`, total: 'Total:', clear: 'Clear', confirmClear: 'Delete all items?'
+        count: n => `${n} item${n === 1 ? '' : 's'}`, total: 'Total:', clear: 'Clear', confirmClear: 'Delete all items?'
       }
     };
 
@@ -407,7 +405,6 @@
       const key = String(code).toLowerCase();
       if(Object.prototype.hasOwnProperty.call(MARKET_LABELS, key)) return MARKET_LABELS[key];
       return key.replace(/[_-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-    }
     }
 
     function formatPriceInput(value){
@@ -1046,6 +1043,9 @@
   </script>
 </body>
 </html>
+
+
+
 
 
 
