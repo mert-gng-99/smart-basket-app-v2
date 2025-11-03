@@ -405,7 +405,6 @@
       <div class="market-products-search">
         <input id="marketProductsInput" type="search" autocomplete="off" placeholder="Ürün ara" />
         <button id="marketProductsSearch" class="btn btn-primary btn-sm" type="button">Ara</button>
-        <!--<button id="marketProductsViewAll" class="btn btn-secondary btn-sm" type="button">Tümünü Görüntüle</button>-->
         <button id="marketProductsRefresh" class="btn btn-ghost btn-sm" type="button">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
@@ -518,8 +517,7 @@
           error: 'Ürünler alınırken bir hata oluştu.',
           resultHint: 'Ürünleri sepete eklemek için butona dokun.',
           addButton: 'Sepete ekle',
-          added: 'Ürün sepete eklendi.',
-          viewAll: 'Tümünü Görüntüle'
+          added: 'Ürün sepete eklendi.'
         },
         add: 'Sepete Ekle', added: 'Sepete atıldı', tick: 'Satın alındı olarak işaretle', del: 'Sil', edit: 'Düzenle',
         editTitle: 'Ürünü Düzenle', save: 'Kaydet', cancel: 'İptal',
@@ -576,8 +574,7 @@
           error: 'Couldn\'t load products at the moment.',
           resultHint: 'Tap the button to add products to your basket.',
           addButton: 'Add to cart',
-          added: 'Product added to basket.',
-          viewAll: 'View All'
+          added: 'Product added to basket.'
         },
         add: 'Add to Cart', added: 'Added to cart', tick: 'Mark as purchased', del: 'Delete', edit: 'Edit',
         editTitle: 'Edit Product', save: 'Save', cancel: 'Cancel',
@@ -943,7 +940,7 @@
       const strings = I18N[pref.lang].products;
       if (marketProductsRefresh) marketProductsRefresh.disabled = marketProductsLoading || !selectedMarket || !lastProductQuery;
       if(marketProductsInput && document.activeElement !== marketProductsInput){
-        marketProductsInput.value = lastProductQuery === '__ALL__' ? '' : lastProductQuery;
+        marketProductsInput.value = lastProductQuery;
       }
       if(!selectedMarket){
         marketProductsStatus.textContent = strings.emptyMarket;
@@ -990,10 +987,7 @@
     }
 
     async function runMarketProductsSearch(term, page = 1){
-      let query = (term || '').trim();
-      if (query === '__ALL__') {
-        query = 'a'; // Use a generic search term to get all products
-      }
+      const query = (term || '').trim();
       currentPage = page;
 
       if(marketProductsInput && document.activeElement !== marketProductsInput){
@@ -1633,10 +1627,6 @@
         runMarketProductsSearch(term);
       });
     }
-
-    
-
-    if (marketProductsRefresh) {
       marketProductsRefresh.addEventListener('click', () => {
         if(selectedMarket && lastProductQuery){
           runMarketProductsSearch(lastProductQuery);
