@@ -734,7 +734,6 @@
     const marketProductsSubtitle = document.getElementById('marketProductsSubtitle');
     const marketProductsInput = document.getElementById('marketProductsInput');
     const marketProductsSearch = document.getElementById('marketProductsSearch');
-    const marketProductsViewAll = document.getElementById('marketProductsViewAll');
     const marketProductsRefresh = document.getElementById('marketProductsRefresh');
     const marketProductsStatus = document.getElementById('marketProductsStatus');
     const marketProductsList = document.getElementById('marketProductsList');
@@ -1635,12 +1634,7 @@
       });
     }
 
-    if (marketProductsViewAll) {
-      marketProductsViewAll.addEventListener('click', () => {
-        lastProductQuery = '__ALL__';
-        runMarketProductsSearch(lastProductQuery);
-      });
-    }
+    
 
     if (marketProductsRefresh) {
       marketProductsRefresh.addEventListener('click', () => {
